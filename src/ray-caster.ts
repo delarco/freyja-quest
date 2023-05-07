@@ -11,9 +11,12 @@ export class RayCaster {
 
     public rays: Array<Ray>;
 
+    public angleStep: number;
+
     constructor(private totalRays: number, private map: Map) {
 
         this.rays = [...Array(totalRays).keys()].map((index) => new Ray(index));
+        this.angleStep = this.VIEW_ANGLE / (this.totalRays - 1);
     }
 
     /**
@@ -23,13 +26,13 @@ export class RayCaster {
      */
     public cast(source: Point, angle: number): void {
 
-        const angleStep = this.VIEW_ANGLE / (this.totalRays - 1);
         const maxDistance = this.map.worldSize.width * this.map.worldSize.height * 100;
 
         for (let rayIndex of ArrayUtils.range(this.totalRays)) {
 
             let ray = this.rays[rayIndex];
-            ray.angle = MathUtils.fixAngle(angle + (this.VIEW_ANGLE / 2) - rayIndex * angleStep);
+            ray.angle = MathUtils.fixAngle(angle + (this.VIEW_ANGLE / 2) - rayIndex * this.angleStep);
+            ray.angleFishEyeFix = MathUtils.fixAngle((this.VIEW_ANGLE / 2) - rayIndex * this.angleStep);
             ray.source = source.clone();
 
             const sourceTile = this.map.getTileFromPosition(ray.source)!;
