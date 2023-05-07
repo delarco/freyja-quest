@@ -4,6 +4,7 @@ import { Player } from "./models/player";
 import { Size } from "./models/size";
 import { RayCaster } from "./ray-caster";
 import { IRenderer } from "./renderer/renderer";
+import { MathUtils } from "./utils/math-utils";
 
 export class World {
 
@@ -27,7 +28,8 @@ export class World {
 
             if(!ray.collidedTile) continue;
 
-            const distance = ray.size;
+            const ca = MathUtils.fixAngle(this.player.angle - ray.angle);
+            const distance = ray.size * Math.cos(ca);
             
             let lineHeight = Math.floor((this.map.tileSize * this.resolution.height) / distance);
 
