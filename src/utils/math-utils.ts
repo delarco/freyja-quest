@@ -1,6 +1,9 @@
 export class MathUtils {
 
-    private static rad360 = Math.PI * 2;
+    public static rad90 = Math.PI / 2;
+    public static rad180 = Math.PI;
+    public static rad270 = Math.PI * 3 / 2;
+    public static rad360 = Math.PI * 2;
 
     /**
      * Returnas the angle between 0 and 2*PI (360)
