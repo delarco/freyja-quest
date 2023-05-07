@@ -1,20 +1,25 @@
 import { Color } from "./models/color";
 import { Map } from "./models/map";
+import { Player } from "./models/player";
 import { Size } from "./models/size";
 import { IRenderer } from "./renderer/renderer";
 
 export class Minimap {
 
-    private BG_COLOR = new Color(221, 221, 221);
+    private BG_COLOR = new Color(200, 200, 200);
 
-    constructor(private map: Map, private renderer: IRenderer, private resolution: Size) { }
+    private minimapTileSize: Size;
 
-    public draw(): void {
+    constructor(private map: Map, private player: Player, private renderer: IRenderer, private resolution: Size, private tileSize: number) {
 
-        const tileWidth = this.resolution.width / this.map.size.width;
-        const tileHeight = this.resolution.width / this.map.size.width;
+        // calculate tile size in minimap
+        this.minimapTileSize = new Size(
+            this.resolution.width / this.map.size.width,
+            this.resolution.width / this.map.size.width
+        );
+    }
 
-        this.renderer.clear(this.BG_COLOR);
+    private drawMap(): void {
 
         for (let y = 0; y < this.map.size.height; y++) {
             for (let x = 0; x < this.map.size.width; x++) {
@@ -22,16 +27,43 @@ export class Minimap {
                 const color =
                     this.map.tiles[y * this.map.size.width + x] > 0
                         ? new Color(170, 170, 170)
-                        : this.BG_COLOR;
+                        : new Color(221, 221, 221);
 
                 this.renderer.drawRect(
-                    x * tileWidth + 1,
-                    y * tileHeight + 1,
-                    tileWidth - 2,
-                    tileHeight - 2,
+                    x * this.minimapTileSize.width + 1,
+                    y * this.minimapTileSize.height + 1,
+                    this.minimapTileSize.width - 2,
+                    this.minimapTileSize.height - 2,
                     color
                 )
             }
         }
+    }
+
+    private drawPlayer(): void {
+
+        // convert player position to minimap coordinates
+        const x = this.minimapTileSize.width / this.tileSize * this.player.position.x;
+        const y = this.minimapTileSize.height / this.tileSize * this.player.position.y;
+
+        // draw angle indicator
+        this.renderer.drawLine(
+            x,
+            y,
+            x + Math.cos(this.player.angle) * 6,
+            y + Math.sin(this.player.angle) * 6,
+            1,
+            Color.BLUE
+        );
+
+        // draw player
+        this.renderer.drawRect(x - 2, y - 2, 4, 4, Color.RED);
+    }
+
+    public draw(): void {
+
+        this.renderer.clear(this.BG_COLOR);
+        this.drawMap();
+        this.drawPlayer();
     }
 }
