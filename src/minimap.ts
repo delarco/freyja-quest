@@ -24,17 +24,14 @@ export class Minimap {
         for (let y = 0; y < this.map.size.height; y++) {
             for (let x = 0; x < this.map.size.width; x++) {
 
-                const color =
-                    this.map.tiles[y * this.map.size.width + x] > 0
-                        ? new Color(170, 170, 170)
-                        : new Color(221, 221, 221);
+                const tile = this.map.tiles[y * this.map.size.width + x];
 
                 this.renderer.drawRect(
                     x * this.minimapTileSize.width + 1,
                     y * this.minimapTileSize.height + 1,
                     this.minimapTileSize.width - 2,
                     this.minimapTileSize.height - 2,
-                    color
+                    tile.minimapColor
                 )
             }
         }

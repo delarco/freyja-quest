@@ -115,8 +115,8 @@ export class Game {
             const tileX = this.map!.getTileFromPosition(new Point(this.player!.position.x + mov.x, this.player!.position.y));
             const tileY = this.map!.getTileFromPosition(new Point(this.player!.position.x, this.player!.position.y + mov.y));
                         
-            if(tileX === 0) this.player!.position.x += mov.x;
-            if(tileY === 0) this.player!.position.y += mov.y;
+            if(!tileX?.collision) this.player!.position.x += mov.x;
+            if(!tileY?.collision) this.player!.position.y += mov.y;
         };
 
         if (this.keyState['ArrowUp']) {
