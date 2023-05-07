@@ -1,16 +1,34 @@
+import { Map } from "./models/map";
 import { Size } from "./models/size";
 import { IRenderer } from "./renderer/renderer";
 
 export class Minimap {
 
-    constructor(private renderer: IRenderer, private resolution: Size) { }
+    constructor(private map: Map, private renderer: IRenderer, private resolution: Size) { }
 
     public draw(): void {
 
-        this.renderer.clear('#FAA');
-        this.renderer.drawLine(0, 0, 50, 50, 1, '#AFA');
-        this.renderer.drawLine(50, 50, 100, 100, 1, '#AAF');
-        this.renderer.drawLine(100, 0, 50, 50, 1, '#AAA');
-        this.renderer.drawLine(0, 100, 50, 50, 1, '#AFF');
+        const tileWidth = this.resolution.width / this.map.size.width;
+        const tileHeight = this.resolution.width / this.map.size.width;
+
+        this.renderer.clear('#DDD');
+
+        for (let y = 0; y < this.map.size.height; y++) {
+            for (let x = 0; x < this.map.size.width; x++) {
+
+                const color =
+                    this.map.tiles[y * this.map.size.width + x] > 0
+                        ? '#AAA'
+                        : '#DDD';
+
+                this.renderer.drawRect(
+                    x * tileWidth + 1,
+                    y * tileHeight + 1,
+                    tileWidth - 2,
+                    tileHeight - 2,
+                    color
+                )
+            }
+        }
     }
 }

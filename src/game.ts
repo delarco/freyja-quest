@@ -1,6 +1,7 @@
 import { Size } from "./models/size";
 import { Minimap } from "./minimap";
 import { Canvas2DRenderer } from "./renderer/canvas-2d-renderer";
+import { Map } from "./models/map";
 
 export class Game {
 
@@ -23,13 +24,20 @@ export class Game {
     private minimap: Minimap | null = null;
 
     /**
-     * Initialize minimap and renderer.
+     * Map
+     */
+    private map: Map | null = null;
+
+    /**
+     * Initialize map, minimap and renderer.
      * @param minimapCanvas 
      */
     public initialize(minimapCanvas: HTMLCanvasElement): void {
 
+        this.map = new Map(10, 10);
+
         const minimapRenderer = new Canvas2DRenderer(minimapCanvas, this.minimapResolution, this.minimapScreenSize);
-        this.minimap = new Minimap(minimapRenderer, this.minimapResolution);
+        this.minimap = new Minimap(this.map, minimapRenderer, this.minimapResolution);
     }
 
     /**
