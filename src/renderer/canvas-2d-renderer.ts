@@ -17,7 +17,7 @@ export class Canvas2DRenderer implements IRenderer {
     }
 
     clear(color: string): void {
-        
+
         if (!this.context) return;
 
         this.context.fillStyle = color;
@@ -25,7 +25,7 @@ export class Canvas2DRenderer implements IRenderer {
     }
 
     drawLine(x1: number, y1: number, x2: number, y2: number, lineWidth: number, color: string): void {
-        
+
         if (!this.context) return;
 
         this.context.strokeStyle = color;
@@ -35,5 +35,13 @@ export class Canvas2DRenderer implements IRenderer {
         this.context.lineTo(x2, y2);
         this.context.stroke();
         this.context.closePath();
+    }
+
+    drawRect(x: number, y: number, w: number, h: number, color: string): void {
+
+        if (!this.context) return;
+
+        this.context.fillStyle = color;
+        this.context.fillRect(x, y, w, h);
     }
 }
