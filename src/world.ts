@@ -2,13 +2,17 @@ import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Size } from "./models/size";
+import { Texture } from "./models/texture";
 import { RayCaster } from "./ray-caster";
 import { IRenderer } from "./renderer/renderer";
+import { ArrayUtils } from "./utils/array-utils";
 import { MathUtils } from "./utils/math-utils";
 
 export class World {
 
     private BG_COLOR = new Color(200, 200, 200);
+
+    private skyboxTexture = Texture.makeSkyBox();
 
     constructor(
         private renderer: IRenderer,
@@ -16,6 +20,26 @@ export class World {
         private map: Map,
         private player: Player,
         private rayCaster: RayCaster) {}
+
+    public drawSkybox(): void {
+
+        for(let x = 0; x < this.resolution.width; x++) {
+
+            const ray = this.rayCaster.rays[x];
+
+            for(let y of ArrayUtils.range(this.resolution.height / 2)){
+
+                const ty = y;
+                let tx = Math.floor(MathUtils.radiansToDegrees(ray.angle) % 360)
+                
+                if(tx < 0) tx = this.skyboxTexture.size.width + tx - 1
+                
+                const color = this.skyboxTexture.getPixelColor(tx, ty);
+
+                this.renderer.drawPixel(x, y, color);
+              }
+        }
+    }
 
     public drawRays(): void {
 
@@ -51,6 +75,7 @@ export class World {
     public draw(): void {
 
         this.renderer.clear(this.BG_COLOR);
+        this.drawSkybox();
         this.drawRays();
     }
 }

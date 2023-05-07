@@ -16,4 +16,22 @@ export class MathUtils {
         if (angle > this.rad360) return angle - this.rad360;
         return angle;
     }
+
+    /**
+     * Returns the angle measured in degrees.
+     * @param d A numeric expression that contains an angle measured in radians.
+     */
+    public static radiansToDegrees(r: number): number {
+
+        return r * 180 / Math.PI;
+    }
+
+    /**
+     * Returns the angle measured in radians.
+     * @param d A numeric expression that contains an angle measured in degrees.
+     */
+    public static degreesToRadians(d: number): number {
+
+        return d * Math.PI / 180;
+    }
 }

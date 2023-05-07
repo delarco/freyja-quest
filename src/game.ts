@@ -15,11 +15,11 @@ export class Game {
     private readonly minimapResolution = new Size(100, 100);
     private readonly minimapScreenSize = new Size(200, 200);
 
-    private readonly worldResolution = new Size(800, 600);
+    private readonly worldResolution = new Size(640, 480);
     private readonly worldScreenSize = new Size(800, 600);
 
     private readonly PLAYER_VELOCITY = 4;
-    private readonly RAYS_TO_CAST = 400;
+    private readonly RAYS_TO_CAST = this.worldResolution.width;
 
     /**
      * Tile size in world
