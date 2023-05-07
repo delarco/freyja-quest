@@ -15,18 +15,30 @@ export class Map {
         this.size = new Size(width, height);
         this.tiles = new Array<Tile>(width * height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
+    }
 
-        for (let y of ArrayUtils.range(this.size.height)) {
-            for (let x of ArrayUtils.range(this.size.width)) {
+    /**
+     * Create a test map surrounded by walls.
+     * @param width 
+     * @param height 
+     * @param tileSize 
+     * @returns 
+     */
+    public static createTestMap(width: number, height: number, tileSize: number): Map {
+
+        const map = new Map(width, height, tileSize);
+
+        for (let y of ArrayUtils.range(map.size.height)) {
+            for (let x of ArrayUtils.range(map.size.width)) {
 
                 const tile = new Tile();
 
                 const isWall = (
                     x == 0
                     || y == 0
-                    || (x == this.size.width - 1 && y < 4)
-                    || (x == this.size.width - 1 && y > 6)
-                    || (y == this.size.height - 1)
+                    || (x == map.size.width - 1 && y < 4)
+                    || (x == map.size.width - 1 && y > 6)
+                    || (y == map.size.height - 1)
                     || (x == 1 && y == 1)
                 )
 
@@ -35,10 +47,14 @@ export class Map {
                     : new Color(221, 221, 221);
 
                 tile.collision = isWall;
+                tile.index = new Point(x, y);
+                tile.position = new Point(x * tileSize, y * tileSize);
 
-                this.tiles[y * this.size.width + x] = tile;
+                map.tiles[y * map.size.width + x] = tile;
             }
         }
+
+        return map;
     }
 
     /**
