@@ -6,6 +6,7 @@ import { Player } from "./models/player";
 import { Point } from "./models/point";
 import { Clock } from "./clock";
 import { RayCaster } from "./ray-caster";
+import { Debugger } from "./debugger";
 
 export class Game {
 
@@ -74,6 +75,10 @@ export class Game {
             this.player,
             this.rayCaster
         );
+
+        Debugger.clock = this.clock;
+        Debugger.map = this.map;
+        Debugger.player = this.player;
     }
 
     /**
@@ -109,6 +114,7 @@ export class Game {
 
         this.rayCaster!.cast(this.player!.position, this.player!.angle);
         this.draw();
+        Debugger.update();
 
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
     }
