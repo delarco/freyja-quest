@@ -9,6 +9,7 @@ import { RayCaster } from "./ray-caster";
 import { Debugger } from "./debugger";
 import { MathUtils } from "./utils/math-utils";
 import { World } from "./world";
+import { Canvas2DImageDataRenderer } from "./renderer/canvas-2d-image-data-renderer";
 
 export class Game {
 
@@ -85,7 +86,7 @@ export class Game {
             this.rayCaster
         );
 
-        const worldRenderer = new Canvas2DRenderer(worldCanvas, this.worldResolution, this.worldScreenSize);
+        const worldRenderer = new Canvas2DImageDataRenderer(worldCanvas, this.worldResolution, this.worldScreenSize);
         this.world = new World(
             worldRenderer,
             this.worldResolution,

@@ -63,4 +63,8 @@ export class Canvas2DRenderer implements IRenderer {
 
         this.drawRect(x, y, 1, 1, color);
     }
+
+    swapBuffer(): void {
+        throw new Error("Method not implemented.");
+    }
 }

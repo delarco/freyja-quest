@@ -118,5 +118,6 @@ export class World {
         this.drawSkybox();
         this.drawFloor();
         this.drawRays();
+        this.renderer.swapBuffer();
     }
 }

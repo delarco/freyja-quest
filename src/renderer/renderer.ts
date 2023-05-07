@@ -11,4 +11,6 @@ export interface IRenderer {
     drawCircle(x: number, y: number, radius: number, borderColor: Color, fillColor: Color): void;
 
     drawPixel(x: number, y: number, color: Color): void;
+
+    swapBuffer(): void;
 }
