@@ -30,7 +30,7 @@ export class Map {
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
         const map = new Map(width, height, tileSize);
-        const floorTexture = Texture.makeTest(new Size(100, 100), Color.ORANGE);
+        const floorTexture = Texture.makeBricks(new Size(32, 32));
 
         for (let y of ArrayUtils.range(map.size.height)) {
             for (let x of ArrayUtils.range(map.size.width)) {

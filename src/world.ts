@@ -13,7 +13,6 @@ import { MathUtils } from "./utils/math-utils";
 export class World {
 
     private skyboxTexture: Texture;
-    private floorTexture: Texture;
 
     constructor(
         private renderer: IRenderer,
@@ -23,7 +22,6 @@ export class World {
         private rayCaster: RayCaster) {
 
         this.skyboxTexture = Texture.makeSkyBox(this.resolution.height / 2);
-        this.floorTexture = Texture.makeTest(new Size(100, 100), Color.ORANGE);
     }
 
     public drawSkybox(ray: Ray): void {
@@ -41,7 +39,6 @@ export class World {
 
     public drawFloor(ray: Ray): void {
 
-        const tex = this.floorTexture;
         const halfVerticalRes = this.resolution.height / 2;
 
         const sin = Math.sin(ray.angle);
@@ -57,22 +54,19 @@ export class World {
             const pixelX = ray.index;
             const pixelY = halfVerticalRes * 2 - j - 1;
 
+            const tile = this.map.getTileFromPosition(new Point(x, y));
+            let tex = tile?.floor;
+
+            if(!tex) tex = Texture.EMPTY;
+
             let tx = Math.floor(x * 2 % 1 * (tex.size.width - 1));
             let ty = Math.floor(y * 2 % 1 * (tex.size.height - 1));
 
             if (tx < 0) tx = tex.size.width + tx - 1;
             if (ty < 0) ty = tex.size.height + ty - 1;
 
-            let color: Color;
-            const tile = this.map.getTileFromPosition(new Point(x, y));
-
-            if (tile?.floor)
-                color = tile.floor.getPixelColor(tx, ty);
-            else
-                color = Color.WHITE;
-
             const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
-            color = Color.shade(color, shade);
+            const color = Color.shade(tex.getPixelColor(tx, ty), shade);
 
             this.renderer.drawPixel(pixelX, pixelY, color);
         }
