@@ -7,7 +7,7 @@ import { MathUtils } from "./utils/math-utils";
 
 export class RayCaster {
 
-    private VIEW_ANGLE = Math.PI / 3; // 60deg
+    private VIEW_ANGLE = MathUtils.rad60;
 
     public rays: Array<Ray>;
 

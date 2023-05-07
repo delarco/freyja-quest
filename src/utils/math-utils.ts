@@ -1,5 +1,6 @@
 export class MathUtils {
 
+    public static rad60 = Math.PI / 3;
     public static rad90 = Math.PI / 2;
     public static rad180 = Math.PI;
     public static rad270 = Math.PI * 3 / 2;
