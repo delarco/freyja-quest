@@ -128,11 +128,13 @@ export class Game {
 
         const movePlayer = (mov: Point) => {
 
-            const tileX = this.map!.getTileFromPosition(new Point(this.player!.position.x + mov.x, this.player!.position.y));
-            const tileY = this.map!.getTileFromPosition(new Point(this.player!.position.x, this.player!.position.y + mov.y));
-                        
-            if(!tileX?.collision) this.player!.position.x += mov.x;
-            if(!tileY?.collision) this.player!.position.y += mov.y;
+            const newXPos = new Point(this.player!.position.x + mov.x, this.player!.position.y);
+            const newYPos = new Point(this.player!.position.x, this.player!.position.y + mov.y);
+            const tileX = this.map!.getTileFromPosition(newXPos);
+            const tileY = this.map!.getTileFromPosition(newYPos);
+            
+            if(!tileX?.collision && newXPos.x > 0 && newXPos.x < this.map!.worldSize.width) this.player!.position.x += mov.x;
+            if(!tileY?.collision && newYPos.y > 0 && newYPos.y < this.map!.worldSize.height) this.player!.position.y += mov.y;
         };
 
         if (this.keyState['ArrowUp']) {

@@ -8,11 +8,13 @@ export class Map {
 
     public readonly size: Size;
     public readonly tiles: Array<Tile>;
+    public readonly worldSize: Size;
 
     constructor(width: number, height: number, private tileSize: number) {
 
         this.size = new Size(width, height);
         this.tiles = new Array<Tile>(width * height);
+        this.worldSize = new Size(width * tileSize, height * tileSize);
 
         for (let y of ArrayUtils.range(this.size.height)) {
             for (let x of ArrayUtils.range(this.size.width)) {
@@ -22,7 +24,8 @@ export class Map {
                 const isWall = (
                     x == 0
                     || y == 0
-                    || (x == this.size.width - 1)
+                    || (x == this.size.width - 1 && y < 4)
+                    || (x == this.size.width - 1 && y > 6)
                     || (y == this.size.height - 1)
                     || (x == 1 && y == 1)
                 )
