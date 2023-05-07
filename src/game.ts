@@ -7,6 +7,7 @@ import { Point } from "./models/point";
 import { Clock } from "./clock";
 import { RayCaster } from "./ray-caster";
 import { Debugger } from "./debugger";
+import { MathUtils } from "./utils/math-utils";
 
 export class Game {
 
@@ -147,7 +148,7 @@ export class Game {
 
             const mov = new Point(
                 Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
-                Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
+                -Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
             );
 
             movePlayer(mov);
@@ -157,7 +158,7 @@ export class Game {
 
             const mov = new Point(
                 -Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
-                -Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
+                Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
             );
 
             movePlayer(mov);
@@ -165,12 +166,12 @@ export class Game {
 
         if (this.keyState['ArrowLeft']) {
 
-            this.player!.angle -= 0.15;
+            this.player!.angle = MathUtils.fixAngle(this.player!.angle + 0.15);
         }
 
         if (this.keyState['ArrowRight']) {
 
-            this.player!.angle += 0.15;
+            this.player!.angle = MathUtils.fixAngle(this.player!.angle - 0.15);
         }
     }
 }
