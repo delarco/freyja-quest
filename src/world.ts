@@ -1,6 +1,7 @@
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
+import { Point } from "./models/point";
 import { Size } from "./models/size";
 import { Texture } from "./models/texture";
 import { RayCaster } from "./ray-caster";
@@ -10,34 +11,34 @@ import { MathUtils } from "./utils/math-utils";
 
 export class World {
 
-    private BG_COLOR = new Color(200, 200, 200);
-
-    private skyboxTexture = Texture.makeSkyBox();
+    private skyboxTexture: Texture;
+    private floorTexture: Texture;
 
     constructor(
         private renderer: IRenderer,
         private resolution: Size,
         private map: Map,
         private player: Player,
-        private rayCaster: RayCaster) {}
+        private rayCaster: RayCaster) {
+
+        this.skyboxTexture = Texture.makeSkyBox(this.resolution.height / 2);
+        this.floorTexture = Texture.makeTest(new Size(100, 100), Color.ORANGE);
+    }
 
     public drawSkybox(): void {
 
-        for(let x = 0; x < this.resolution.width; x++) {
+        // TODO: move skybox/floor/rays drawing to unique for(rays)
+        for (let ray of this.rayCaster.rays) {
 
-            const ray = this.rayCaster.rays[x];
+            const x = ray.index;
+            const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
 
-            for(let y of ArrayUtils.range(this.resolution.height / 2)){
+            for (let y of ArrayUtils.range(this.resolution.height / 2)) {
 
                 const ty = y;
-                let tx = Math.floor(MathUtils.radiansToDegrees(ray.angle) % 360)
-                
-                if(tx < 0) tx = this.skyboxTexture.size.width + tx - 1
-                
                 const color = this.skyboxTexture.getPixelColor(tx, ty);
-
                 this.renderer.drawPixel(x, y, color);
-              }
+            }
         }
     }
 
@@ -50,11 +51,11 @@ export class World {
 
             const ray = this.rayCaster.rays[index];
 
-            if(!ray.collidedTile) continue;
+            if (!ray.collidedTile) continue;
 
             const ca = MathUtils.fixAngle(this.player.angle - ray.angle);
             const distance = ray.size * Math.cos(ca);
-            
+
             let lineHeight = Math.floor((this.map.tileSize * this.resolution.height) / distance);
 
             if (lineHeight > this.resolution.height) {
@@ -64,7 +65,7 @@ export class World {
 
             const x = index * lineWidth;
             const lineOffsetY = Math.floor(halfVerticalRes - lineHeight / 2);
-            
+
             let color = new Color(100, 100, 100);
             if (!ray.hitVerticalFirst) color = Color.shade(color, 0.6);
 
@@ -72,10 +73,50 @@ export class World {
         }
     }
 
+    public drawFloor(): void {
+
+        const tex = this.floorTexture;
+        const halfVerticalRes = this.resolution.height / 2;
+
+        for (let i of ArrayUtils.range(this.resolution.width)) {
+
+            const ray = this.rayCaster.rays[i];
+            const sin = Math.sin(ray.angle);
+            const cos = Math.cos(ray.angle);
+            const cosEyeFish = Math.cos(ray.angleFishEyeFix);
+
+            for (let j of ArrayUtils.range(halfVerticalRes)) {
+
+                const n = (halfVerticalRes / (halfVerticalRes - j)) / cosEyeFish;
+                const x = this.player.position.x / this.map.tileSize + cos * n;
+                const y = this.player.position.y / this.map.tileSize - sin * n;
+
+                const pixelX = i;
+                const pixelY = halfVerticalRes * 2 - j - 1;
+
+                let tx = Math.floor(x * 2 % 1 * (tex.size.width - 1));
+                let ty = Math.floor(y * 2 % 1 * (tex.size.height - 1));
+
+                if (tx < 0) tx = tex.size.width + tx - 1;
+                if (ty < 0) ty = tex.size.height + ty - 1;
+
+                let color: Color;
+                const tile = this.map.getTileFromPosition(new Point(x, y));
+
+                if(tile?.floor)
+                    color = tile.floor.getPixelColor(tx, ty);
+                else
+                    color = Color.WHITE;
+
+                this.renderer.drawPixel(pixelX, pixelY, color);
+            }
+        }
+    }
+
     public draw(): void {
 
-        this.renderer.clear(this.BG_COLOR);
         this.drawSkybox();
+        this.drawFloor();
         this.drawRays();
     }
 }

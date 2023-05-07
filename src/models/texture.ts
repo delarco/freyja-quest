@@ -25,9 +25,9 @@ export class Texture {
         return this.data[y * this.size.width + x];
     }
 
-    public static makeSkyBox(debugBorders: boolean = false): Texture {
+    public static makeSkyBox(height: number, debugBorders: boolean = false): Texture {
 
-        const texture = new Texture('skybox', new Size(360, 240));
+        const texture = new Texture('skybox', new Size(360, height));
 
         for (let y of ArrayUtils.range(texture.size.height)) {
             for (let x of ArrayUtils.range(texture.size.width)) {
@@ -61,5 +61,31 @@ export class Texture {
         if(debugBorders) texture.drawPixel(1, 1, Color.ORANGE);
 
         return texture;
+    }
+
+    public static makeTest(size: Size, fill: Color) {
+
+        const texture = new Texture('floor', size);
+
+        for(let y of ArrayUtils.range(texture.size.height)) {
+            for(let x of ArrayUtils.range(texture.size.width)) {
+
+                if(
+                    (x == 0 || y == 0)
+                    || (x == texture.size.width - 1)
+                    || (y == texture.size.height - 1)
+                    || (x == 1 && y == 1)
+                )
+                {
+                    texture.drawPixel(x, y, Color.RED);
+                }
+                else{
+                    texture.drawPixel(x, y, fill)
+
+                }
+            }
+        }
+
+       return texture;
     }
 }

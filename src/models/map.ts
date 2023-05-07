@@ -2,6 +2,7 @@ import { ArrayUtils } from "../utils/array-utils";
 import { Color } from "./color";
 import { Point } from "./point";
 import { Size } from "./size";
+import { Texture } from "./texture";
 import { Tile } from "./tile";
 
 export class Map {
@@ -29,6 +30,7 @@ export class Map {
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
         const map = new Map(width, height, tileSize);
+        const floorTexture = Texture.makeTest(new Size(100, 100), Color.ORANGE);
 
         for (let y of ArrayUtils.range(map.size.height)) {
             for (let x of ArrayUtils.range(map.size.width)) {
@@ -56,6 +58,7 @@ export class Map {
                 tile.collision = isWall;
                 tile.index = new Point(x, y);
                 tile.position = new Point(x * tileSize, y * tileSize);
+                tile.floor = floorTexture;
 
                 map.tiles[y * map.size.width + x] = tile;
             }
