@@ -2,6 +2,7 @@ import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Point } from "./models/point";
+import { Ray } from "./models/ray";
 import { Size } from "./models/size";
 import { Texture } from "./models/texture";
 import { RayCaster } from "./ray-caster";
@@ -25,20 +26,55 @@ export class World {
         this.floorTexture = Texture.makeTest(new Size(100, 100), Color.ORANGE);
     }
 
-    public drawSkybox(): void {
+    public drawSkybox(ray: Ray): void {
 
-        // TODO: move skybox/floor/rays drawing to unique for(rays)
-        for (let ray of this.rayCaster.rays) {
+        const x = ray.index;
+        const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
 
-            const x = ray.index;
-            const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
+        for (let y of ArrayUtils.range(this.resolution.height / 2)) {
 
-            for (let y of ArrayUtils.range(this.resolution.height / 2)) {
+            const ty = y;
+            const color = this.skyboxTexture.getPixelColor(tx, ty);
+            this.renderer.drawPixel(x, y, color);
+        }
+    }
 
-                const ty = y;
-                const color = this.skyboxTexture.getPixelColor(tx, ty);
-                this.renderer.drawPixel(x, y, color);
-            }
+    public drawFloor(ray: Ray): void {
+
+        const tex = this.floorTexture;
+        const halfVerticalRes = this.resolution.height / 2;
+
+        const sin = Math.sin(ray.angle);
+        const cos = Math.cos(ray.angle);
+        const cosEyeFish = Math.cos(ray.angleFishEyeFix);
+
+        for (let j of ArrayUtils.range(halfVerticalRes)) {
+
+            const n = (halfVerticalRes / (halfVerticalRes - j)) / cosEyeFish;
+            const x = this.player.position.x / this.map.tileSize + cos * n;
+            const y = this.player.position.y / this.map.tileSize - sin * n;
+
+            const pixelX = ray.index;
+            const pixelY = halfVerticalRes * 2 - j - 1;
+
+            let tx = Math.floor(x * 2 % 1 * (tex.size.width - 1));
+            let ty = Math.floor(y * 2 % 1 * (tex.size.height - 1));
+
+            if (tx < 0) tx = tex.size.width + tx - 1;
+            if (ty < 0) ty = tex.size.height + ty - 1;
+
+            let color: Color;
+            const tile = this.map.getTileFromPosition(new Point(x, y));
+
+            if (tile?.floor)
+                color = tile.floor.getPixelColor(tx, ty);
+            else
+                color = Color.WHITE;
+
+            const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
+            color = Color.shade(color, shade);
+
+            this.renderer.drawPixel(pixelX, pixelY, color);
         }
     }
 
@@ -50,6 +86,9 @@ export class World {
         for (let index = 0; index < this.rayCaster.rays.length; index++) {
 
             const ray = this.rayCaster.rays[index];
+
+            this.drawSkybox(ray);
+            this.drawFloor(ray);
 
             if (!ray.collidedTile) continue;
 
@@ -76,53 +115,8 @@ export class World {
         }
     }
 
-    public drawFloor(): void {
-
-        const tex = this.floorTexture;
-        const halfVerticalRes = this.resolution.height / 2;
-
-        for (let i of ArrayUtils.range(this.resolution.width)) {
-
-            const ray = this.rayCaster.rays[i];
-            const sin = Math.sin(ray.angle);
-            const cos = Math.cos(ray.angle);
-            const cosEyeFish = Math.cos(ray.angleFishEyeFix);
-
-            for (let j of ArrayUtils.range(halfVerticalRes)) {
-
-                const n = (halfVerticalRes / (halfVerticalRes - j)) / cosEyeFish;
-                const x = this.player.position.x / this.map.tileSize + cos * n;
-                const y = this.player.position.y / this.map.tileSize - sin * n;
-
-                const pixelX = i;
-                const pixelY = halfVerticalRes * 2 - j - 1;
-
-                let tx = Math.floor(x * 2 % 1 * (tex.size.width - 1));
-                let ty = Math.floor(y * 2 % 1 * (tex.size.height - 1));
-
-                if (tx < 0) tx = tex.size.width + tx - 1;
-                if (ty < 0) ty = tex.size.height + ty - 1;
-
-                let color: Color;
-                const tile = this.map.getTileFromPosition(new Point(x, y));
-
-                if(tile?.floor)
-                    color = tile.floor.getPixelColor(tx, ty);
-                else
-                    color = Color.WHITE;
-
-                const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
-                color = Color.shade(color, shade);
-
-                this.renderer.drawPixel(pixelX, pixelY, color);
-            }
-        }
-    }
-
     public draw(): void {
 
-        this.drawSkybox();
-        this.drawFloor();
         this.drawRays();
         this.renderer.swapBuffer();
     }
