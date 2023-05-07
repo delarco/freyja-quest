@@ -1,3 +1,4 @@
+import { Color } from "../models/color";
 import { Size } from "../models/size";
 import { IRenderer } from "./renderer";
 
@@ -16,19 +17,19 @@ export class Canvas2DRenderer implements IRenderer {
         this.canvas.style.width = `${screen.height}px`;
     }
 
-    clear(color: string): void {
+    clear(color: Color): void {
 
         if (!this.context) return;
 
-        this.context.fillStyle = color;
+        this.context.fillStyle = color.RGB;
         this.context.fillRect(0, 0, this.resolution.width, this.resolution.height);
     }
 
-    drawLine(x1: number, y1: number, x2: number, y2: number, lineWidth: number, color: string): void {
+    drawLine(x1: number, y1: number, x2: number, y2: number, lineWidth: number, color: Color): void {
 
         if (!this.context) return;
 
-        this.context.strokeStyle = color;
+        this.context.strokeStyle = color.RGB;
         this.context.beginPath();
         this.context.lineWidth = lineWidth;
         this.context.moveTo(x1, y1);
@@ -37,11 +38,11 @@ export class Canvas2DRenderer implements IRenderer {
         this.context.closePath();
     }
 
-    drawRect(x: number, y: number, w: number, h: number, color: string): void {
+    drawRect(x: number, y: number, w: number, h: number, color: Color): void {
 
         if (!this.context) return;
 
-        this.context.fillStyle = color;
+        this.context.fillStyle = color.RGB;
         this.context.fillRect(x, y, w, h);
     }
 }
