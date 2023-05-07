@@ -13,8 +13,8 @@ export class Canvas2DRenderer implements IRenderer {
 
         this.canvas.width = resolution.width;
         this.canvas.height = resolution.height;
-        this.canvas.style.width = `${screen.width}px`;
-        this.canvas.style.width = `${screen.height}px`;
+        this.canvas.style.width = `${this.screen.width}px`;
+        this.canvas.style.height = `${this.screen.height}px`;
     }
 
     clear(color: Color): void {
