@@ -9,9 +9,11 @@ export class Map {
     public readonly size: Size;
     public readonly tiles: Array<Tile>;
     public readonly worldSize: Size;
+    public readonly tileSize: number;
 
-    constructor(width: number, height: number, private tileSize: number) {
+    constructor(width: number, height: number, tileSize: number) {
 
+        this.tileSize = tileSize;
         this.size = new Size(width, height);
         this.tiles = new Array<Tile>(width * height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
@@ -40,6 +42,11 @@ export class Map {
                     || (x == map.size.width - 1 && y > 6)
                     || (y == map.size.height - 1)
                     || (x == 1 && y == 1)
+                    || (x == 4 && y > 3 && y < 15 )
+                    || (x == 16 && y > 8 && y < 15 )
+                    || (x > 5 && x < 15 && y == 12 )
+                    || (x >= 16 && x <= 17 && y >= 2 && y <= 3 )
+                    || (x >= 10 && x <= 11 && y >= 5 && y <= 6 )
                 )
 
                 tile.minimapColor = isWall
