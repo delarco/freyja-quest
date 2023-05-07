@@ -18,6 +18,17 @@ export class MathUtils {
     }
 
     /**
+     * Returnas the angle between 0 and 360
+     * @param x A numeric expression that contains an angle measured in degrees.
+     */
+        public static fixAngleDegrees(x: number): number {
+
+            if (x < 0) return 360 + x;
+            if (x > 360) return x - 360;
+            return x;
+        }
+
+    /**
      * Returns the angle measured in degrees.
      * @param d A numeric expression that contains an angle measured in radians.
      */
