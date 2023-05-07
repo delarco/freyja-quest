@@ -4,6 +4,10 @@ import { Size } from "./size";
 
 export class Texture {
 
+    public static readonly EMPTY: Texture = new Texture(
+        'empty', new Size(32, 32), [...new Array(32 * 32).keys()].map(() => new Color())
+    );
+
     constructor(
         public name: string,
         public size: Size = new Size(0, 0),
@@ -21,7 +25,7 @@ export class Texture {
         return this.data[y * this.size.width + x];
     }
 
-    public static makeSkyBox(): Texture {
+    public static makeSkyBox(debugBorders: boolean = false): Texture {
 
         const texture = new Texture('skybox', new Size(360, 240));
 
@@ -40,10 +44,22 @@ export class Texture {
                         y * 255 / texture.size.height
                     );
 
+                
+                if(
+                    debugBorders && (
+                        x == 0 
+                        || y == 0
+                        || x == texture.size.width - 1
+                        || y == texture.size.height - 1
+                    )
+                ) color = Color.RED;
+
                 texture.drawPixel(x, y, color);
             }
         }
         
+        if(debugBorders) texture.drawPixel(1, 1, Color.ORANGE);
+
         return texture;
     }
 }

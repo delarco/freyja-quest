@@ -1,5 +1,6 @@
 import { Color } from "./color";
 import { Point } from "./point";
+import { Texture } from "./texture";
 
 export class Tile {
 
@@ -7,6 +8,7 @@ export class Tile {
     public collision: boolean;
     public index: Point;
     public position: Point;
+    public floor: Texture;
 
     constructor() {
         
@@ -14,5 +16,6 @@ export class Tile {
         this.collision = true;
         this.index = new Point();
         this.position = new Point();
+        this.floor = Texture.EMPTY;
     }
 }
