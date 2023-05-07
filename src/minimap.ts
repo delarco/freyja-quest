@@ -15,7 +15,6 @@ export class Minimap {
     constructor(
         private renderer: IRenderer,
         private resolution: Size,
-        private tileSize: number,
         private map: Map,
         private player: Player,
         private rayCaster: RayCaster) {
@@ -48,8 +47,8 @@ export class Minimap {
     private drawPlayer(): void {
 
         // convert player position to minimap coordinates
-        const x = this.minimapTileSize.width / this.tileSize * this.player.position.x;
-        const y = this.minimapTileSize.height / this.tileSize * this.player.position.y;
+        const x = this.minimapTileSize.width / this.map.tileSize * this.player.position.x;
+        const y = this.minimapTileSize.height / this.map.tileSize * this.player.position.y;
 
         // draw angle indicator
         this.renderer.drawLine(
@@ -70,12 +69,12 @@ export class Minimap {
         for (let ray of this.rayCaster.rays) {
 
             // convert ray source to minimap coordinates
-            const sx = this.minimapTileSize.width / this.tileSize * ray.source.x;
-            const sy = this.minimapTileSize.height / this.tileSize * ray.source.y;
+            const sx = this.minimapTileSize.width / this.map.tileSize * ray.source.x;
+            const sy = this.minimapTileSize.height / this.map.tileSize * ray.source.y;
 
             // convert ray destination to minimap coordinates
-            const dx = this.minimapTileSize.width / this.tileSize * ray.destination.x;
-            const dy = this.minimapTileSize.height / this.tileSize * ray.destination.y;
+            const dx = this.minimapTileSize.width / this.map.tileSize * ray.destination.x;
+            const dy = this.minimapTileSize.height / this.map.tileSize * ray.destination.y;
 
             this.renderer.drawLine(sx, sy, dx, dy, 1, Color.GREEN);
         }

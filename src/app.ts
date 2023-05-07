@@ -21,7 +21,10 @@ export class App {
         this.userInterface.onKeyDown.on(key => this.game.keyState[key] = true);
         this.userInterface.onKeyUp.on(key => this.game.keyState[key] = false);
 
-        this.game.initialize(this.userInterface.minimapCanvas);
+        this.game.initialize(
+            this.userInterface.minimapCanvas,
+            this.userInterface.worldCanvas
+        );
         this.game.run();
     }
 }
