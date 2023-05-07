@@ -3,6 +3,7 @@ import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Size } from "./models/size";
 import { IRenderer } from "./renderer/renderer";
+import { ArrayUtils } from "./utils/array-utils";
 
 export class Minimap {
 
@@ -21,8 +22,8 @@ export class Minimap {
 
     private drawMap(): void {
 
-        for (let y = 0; y < this.map.size.height; y++) {
-            for (let x = 0; x < this.map.size.width; x++) {
+        for (let y of ArrayUtils.range(this.map.size.height)) {
+            for (let x of ArrayUtils.range(this.map.size.width)) {
 
                 const tile = this.map.tiles[y * this.map.size.width + x];
 

@@ -1,3 +1,4 @@
+import { ArrayUtils } from "../utils/array-utils";
 import { Color } from "./color";
 import { Point } from "./point";
 import { Size } from "./size";
@@ -13,11 +14,11 @@ export class Map {
         this.size = new Size(width, height);
         this.tiles = new Array<Tile>(width * height);
 
-        for (let y = 0; y < this.size.height; y++) {
-            for (let x = 0; x < this.size.width; x++) {
+        for (let y of ArrayUtils.range(this.size.height)) {
+            for (let x of ArrayUtils.range(this.size.width)) {
 
                 const tile = new Tile();
-                
+
                 const isWall = (
                     x == 0
                     || y == 0
@@ -26,7 +27,7 @@ export class Map {
                     || (x == 1 && y == 1)
                 )
 
-                tile.minimapColor = isWall 
+                tile.minimapColor = isWall
                     ? new Color(170, 170, 170)
                     : new Color(221, 221, 221);
 
