@@ -54,7 +54,7 @@ export class Game {
      */
     public initialize(minimapCanvas: HTMLCanvasElement): void {
 
-        this.map = new Map(10, 10);
+        this.map = new Map(10, 10, this.TILE_SIZE);
         this.player = new Player(new Point(90, 90));
 
         const minimapRenderer = new Canvas2DRenderer(minimapCanvas, this.minimapResolution, this.minimapScreenSize);
@@ -110,16 +110,33 @@ export class Game {
      */
     private updatePlayer(): void {
 
+        const movePlayer = (mov: Point) => {
+
+            const tileX = this.map!.getTileFromPosition(new Point(this.player!.position.x + mov.x, this.player!.position.y));
+            const tileY = this.map!.getTileFromPosition(new Point(this.player!.position.x, this.player!.position.y + mov.y));
+                        
+            if(tileX === 0) this.player!.position.x += mov.x;
+            if(tileY === 0) this.player!.position.y += mov.y;
+        };
+
         if (this.keyState['ArrowUp']) {
 
-            this.player!.position.x += Math.cos(this.player!.angle) * this.PLAYER_VELOCITY;
-            this.player!.position.y += Math.sin(this.player!.angle) * this.PLAYER_VELOCITY;
+            const mov = new Point(
+                Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
+                Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
         }
 
         if (this.keyState['ArrowDown']) {
 
-            this.player!.position.x -= Math.cos(this.player!.angle) * this.PLAYER_VELOCITY;
-            this.player!.position.y -= Math.sin(this.player!.angle) * this.PLAYER_VELOCITY;
+            const mov = new Point(
+                -Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
+                -Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
         }
 
         if (this.keyState['ArrowLeft']) {
