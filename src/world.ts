@@ -69,6 +69,9 @@ export class World {
             let color = new Color(100, 100, 100);
             if (!ray.hitVerticalFirst) color = Color.shade(color, 0.6);
 
+            const shade = 0.2 + 0.8 * (1 - distance / halfVerticalRes);
+            color = Color.shade(color, shade);
+
             this.renderer.drawRect(x, lineOffsetY, lineWidth, lineHeight, color);
         }
     }
@@ -107,6 +110,9 @@ export class World {
                     color = tile.floor.getPixelColor(tx, ty);
                 else
                     color = Color.WHITE;
+
+                const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
+                color = Color.shade(color, shade);
 
                 this.renderer.drawPixel(pixelX, pixelY, color);
             }
