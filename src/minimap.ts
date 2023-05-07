@@ -54,7 +54,7 @@ export class Minimap {
         );
 
         // draw player
-        this.renderer.drawRect(x - 2, y - 2, 4, 4, Color.RED);
+        this.renderer.drawCircle(x, y, 2, Color.RED, Color.ORANGE);
     }
 
     public draw(): void {

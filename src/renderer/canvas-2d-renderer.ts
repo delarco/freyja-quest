@@ -45,4 +45,17 @@ export class Canvas2DRenderer implements IRenderer {
         this.context.fillStyle = color.RGB;
         this.context.fillRect(x, y, w, h);
     }
+
+    drawCircle(x: number, y: number, radius: number, borderColor: Color, fillColor: Color): void {
+
+        if (!this.context) return;
+
+        this.context.strokeStyle = borderColor.RGBA;
+        this.context.fillStyle = fillColor.RGBA;
+        this.context.beginPath();
+        this.context.arc(x, y, radius, 0, 2 * Math.PI);
+        this.context.stroke();
+        this.context.fill();
+        this.context.closePath();
+    }
 }
