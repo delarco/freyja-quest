@@ -58,4 +58,9 @@ export class Canvas2DRenderer implements IRenderer {
         this.context.fill();
         this.context.closePath();
     }
+
+    drawPixel(x: number, y: number, color: Color): void {
+
+        this.drawRect(x, y, 1, 1, color);
+    }
 }
