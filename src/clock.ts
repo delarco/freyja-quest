@@ -30,8 +30,6 @@ export class Clock {
             this.lastFrameTime = now;
             this.fps = this.fpsCounter;
             this.fpsCounter = 0;
-
-            document.title = this.fps.toString();
         }
 
         if (now - this.lastUpdateTime > this.updateRequiredElapsed) {
