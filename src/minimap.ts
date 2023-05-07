@@ -55,8 +55,8 @@ export class Minimap {
         this.renderer.drawLine(
             x,
             y,
-            x + Math.cos(this.player.angle) * 6,
-            y + Math.sin(this.player.angle) * 6,
+            x + Math.cos(-this.player.angle) * 6,
+            y + Math.sin(-this.player.angle) * 6,
             1,
             Color.BLUE
         );
