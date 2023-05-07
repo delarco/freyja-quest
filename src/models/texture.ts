@@ -88,4 +88,29 @@ export class Texture {
 
        return texture;
     }
+
+    public static makeBricks(size: Size): Texture {
+
+        const texture = new Texture('bricks', size);
+
+        for(let y of ArrayUtils.range(size.height)) {
+
+            for(let x of ArrayUtils.range(size.width)) {
+
+                let color = (
+                    y == 0
+                    || (x == size.width / 2 && y < size.height / 2)
+                    || (y == size.height / 2)
+                    || (x == Math.trunc(size.width / 4) && y > size.height / 2)
+                    || (x == Math.trunc(size.width / 4) * 3 && y > size.height / 2)
+                )
+                ? new Color(99, 69, 44)
+                : new Color(200, 140, 90)
+
+                texture.data.push(color)
+            }
+        }
+
+        return texture;
+    }
 }
