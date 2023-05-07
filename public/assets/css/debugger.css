@@ -1,0 +1,9 @@
+#debugger {
+    font-family: monospace;
+    position: absolute;
+    width: 240px;
+    right: 10px;
+    top: 0;
+    font-size: .7rem;
+    border: 1px dashed #FFD0D0;
+}

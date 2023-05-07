@@ -1,0 +1,84 @@
+:root {
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color-scheme: light dark;
+    color: #646464;
+    background-color: #F4F4F4;
+
+    --box-shadow-color: #E0E0E0;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: 50px;
+    grid-template-rows: 60px auto 60px;
+    grid-template-areas: "header header"
+        "menu game"
+        "footer footer";
+}
+
+header {
+    grid-area: header;
+    background-color: #F0F0F0;
+    line-height: 60px;
+    padding-left: 8px;
+    font-size: 1.8rem;
+    box-shadow: 0px 2px 2px 0px var(--box-shadow-color);
+}
+
+section,
+aside {
+    padding-top: 4px;
+}
+
+section {
+    padding-left: 4px;
+}
+
+section {
+    grid-area: game;
+}
+
+aside {
+    grid-area: menu;
+    box-shadow: 2px 0px 2px -1px var(--box-shadow-color);
+}
+
+footer {
+    grid-area: footer;
+    line-height: 60px;
+    text-align: center;
+    color: #A4A4A4;
+    font-size: .8rem;
+    box-shadow: 0px -2px 2px 0px var(--box-shadow-color);
+}
+
+aside ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+aside ul li {
+    cursor: pointer;
+    width: 100%;
+    height: 60px;
+    transition: background-color .2s ease-in-out;
+}
+
+aside ul li img {
+    margin-top: 14px;
+    margin-left: 9px;
+}
+
+aside ul li:hover,
+aside ul li.active {
+    background-color: #404040;
+}
+
+aside ul li:hover img,
+aside ul li.active img {
+    filter: invert(1);
+}

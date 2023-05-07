@@ -2,15 +2,63 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/icons/placeholder.svg" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icons/placeholder.svg" />
     <meta name="description" content="Freyja Quest - Altissia Tales. An exploration game developed in TypeScript using ray casting algorithm.">
     <meta name="keywords" content="freyja quest, game, ray casting, exploration">
     <meta name="author" content="Leandro Del Arco">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Freyja Quest - Altissia Tales</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <header>Freyja Quest - Altissia Tales</header>
+      <aside id="menu">
+        <ul>
+          <li class="tooltip disabled">
+            <img src="assets/icons/controller.svg" />
+            <span class="tooltiptext tooltip-right">Controller</span>
+          </li>
+          <li class="tooltip disabled">
+            <img src="assets/icons/audio.svg" />
+            <span class="tooltiptext tooltip-right">Audio</span>
+          </li>
+          <li class="tooltip disabled" id="debugger-button">
+            <img src="assets/icons/bug.svg" />
+            <span class="tooltiptext tooltip-right">Debugger</span>
+          </li>
+          <li class="tooltip disabled">
+            <img src="assets/icons/info.svg" />
+            <span class="tooltiptext tooltip-right">About</span>
+          </li>
+          <li class="tooltip">
+            <a href="https://github.com/delarco/freyja-quest" target="_blank">
+              <img src="assets/icons/code.svg" />
+              <span class="tooltiptext tooltip-right">Source</span>
+            </a>
+          </li>
+          <li class="tooltip disabled">
+            <img src="assets/icons/doc.svg" />
+            <span class="tooltiptext tooltip-right">Docs</span>
+          </li>
+          <li class="tooltip disabled">
+            <img src="assets/icons/tests.svg" />
+            <span class="tooltiptext tooltip-right">Tests</span>
+          </li>
+        </ul>
+      </aside>
+      <section>
+        <canvas id="minimap"></canvas>
+        <canvas id="world"></canvas>
+      </section>
+      <footer>Copyright © 2023 by delarco. All Rights Reserved.</footer>
+      <div id="debugger">
+        <ul>
+          <li>FPS: <span id="debug-fps"></span></li>
+          <li>Player: <span id="debug-player"></span></li>
+        </ul>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
