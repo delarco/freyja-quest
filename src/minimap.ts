@@ -2,6 +2,7 @@ import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Size } from "./models/size";
+import { RayCaster } from "./ray-caster";
 import { IRenderer } from "./renderer/renderer";
 import { ArrayUtils } from "./utils/array-utils";
 
@@ -11,7 +12,13 @@ export class Minimap {
 
     private minimapTileSize: Size;
 
-    constructor(private map: Map, private player: Player, private renderer: IRenderer, private resolution: Size, private tileSize: number) {
+    constructor(
+        private renderer: IRenderer,
+        private resolution: Size,
+        private tileSize: number,
+        private map: Map,
+        private player: Player,
+        private rayCaster: RayCaster) {
 
         // calculate tile size in minimap
         this.minimapTileSize = new Size(
@@ -58,10 +65,27 @@ export class Minimap {
         this.renderer.drawCircle(x, y, 2, Color.RED, Color.ORANGE);
     }
 
+    private drawRays(): void {
+
+        for (let ray of this.rayCaster.rays) {
+
+            // convert ray source to minimap coordinates
+            const sx = this.minimapTileSize.width / this.tileSize * ray.source.x;
+            const sy = this.minimapTileSize.height / this.tileSize * ray.source.y;
+
+            // convert ray destination to minimap coordinates
+            const dx = this.minimapTileSize.width / this.tileSize * ray.destination.x;
+            const dy = this.minimapTileSize.height / this.tileSize * ray.destination.y;
+
+            this.renderer.drawLine(sx, sy, dx, dy, 1, Color.GREEN);
+        }
+    }
+
     public draw(): void {
 
         this.renderer.clear(this.BG_COLOR);
         this.drawMap();
+        this.drawRays();
         this.drawPlayer();
     }
 }

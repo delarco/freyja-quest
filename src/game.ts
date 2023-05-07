@@ -5,6 +5,7 @@ import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Point } from "./models/point";
 import { Clock } from "./clock";
+import { RayCaster } from "./ray-caster";
 
 export class Game {
 
@@ -12,6 +13,7 @@ export class Game {
     private readonly minimapScreenSize = new Size(500, 500);
 
     private readonly PLAYER_VELOCITY = 4;
+    private readonly RAYS_TO_CAST = 400;
 
     /**
      * Tile size in world
@@ -49,6 +51,11 @@ export class Game {
     private clock = new Clock();
 
     /**
+     * Ray caster
+     */
+    private rayCaster: RayCaster | null = null;
+
+    /**
      * Initialize map, minimap and renderer.
      * @param minimapCanvas 
      */
@@ -56,9 +63,17 @@ export class Game {
 
         this.map = new Map(10, 10, this.TILE_SIZE);
         this.player = new Player(new Point(90, 90));
+        this.rayCaster = new RayCaster(this.RAYS_TO_CAST);
 
         const minimapRenderer = new Canvas2DRenderer(minimapCanvas, this.minimapResolution, this.minimapScreenSize);
-        this.minimap = new Minimap(this.map, this.player, minimapRenderer, this.minimapResolution, this.TILE_SIZE);
+        this.minimap = new Minimap(
+            minimapRenderer,
+            this.minimapResolution,
+            this.TILE_SIZE,
+            this.map,
+            this.player,
+            this.rayCaster
+        );
     }
 
     /**
@@ -92,6 +107,7 @@ export class Game {
             this.updatePlayer();
         }
 
+        this.rayCaster!.cast(this.player!.position, this.player!.angle);
         this.draw();
 
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
