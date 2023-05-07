@@ -1,0 +1,38 @@
+{
+  "name": "freyja-quest",
+  "private": false,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A ray casting exploration game.",
+  "keywords": [
+    "ray casting",
+    "game",
+    "typescript"
+  ],
+  "homepage": "https://github.com/delarco/freyja-quest#readme",
+  "bugs": {
+    "url" : "https://github.com/delarco/freyja-quest/issues",
+    "email" : "leandrodelarco@outlook.com"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Leandro Del Arco",
+    "email": "leandrodelarco@outlook.com",
+    "url": "https://github.com/delarco"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest --reporter verbose",
+    "coverage": "vitest run --coverage",
+    "doc": "npx typedoc --out dist/docs --entryPointStrategy expand ./src"
+  },
+  "devDependencies": {
+    "@vitest/coverage-c8": "^0.31.0",
+    "typedoc": "^0.24.6",
+    "typescript": "^5.0.2",
+    "vite": "^4.3.2",
+    "vitest": "^0.31.0"
+  }
+}
