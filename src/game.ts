@@ -4,16 +4,19 @@ import { Canvas2DRenderer } from "./renderer/canvas-2d-renderer";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Point } from "./models/point";
+import { Clock } from "./clock";
 
 export class Game {
 
-    private readonly minimapResolution = new Size(100, 100);   
+    private readonly minimapResolution = new Size(100, 100);
     private readonly minimapScreenSize = new Size(500, 500);
+
+    private readonly PLAYER_VELOCITY = 4;
 
     /**
      * Tile size in world
      */
-        private readonly TILE_SIZE = 20;
+    private readonly TILE_SIZE = 20;
 
     /**
      * Key State
@@ -39,6 +42,11 @@ export class Game {
      * Player
      */
     private player: Player | null = null;
+
+    /**
+     * Clock for FPS count and delta time to updates.
+     */
+    private clock = new Clock();
 
     /**
      * Initialize map, minimap and renderer.
@@ -77,8 +85,51 @@ export class Game {
      */
     private mainLoop(): void {
 
-        this.minimap!.draw();
+        const update = this.clock.tick();
+
+        if (update) {
+
+            this.updatePlayer();
+        }
+
+        this.draw();
 
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
+    }
+
+    /**
+     * Draws minimap and world.
+     */
+    private draw(): void {
+
+        this.minimap!.draw();
+    }
+
+    /**
+     * Update player position
+     */
+    private updatePlayer(): void {
+
+        if (this.keyState['ArrowUp']) {
+
+            this.player!.position.x += Math.cos(this.player!.angle) * this.PLAYER_VELOCITY;
+            this.player!.position.y += Math.sin(this.player!.angle) * this.PLAYER_VELOCITY;
+        }
+
+        if (this.keyState['ArrowDown']) {
+
+            this.player!.position.x -= Math.cos(this.player!.angle) * this.PLAYER_VELOCITY;
+            this.player!.position.y -= Math.sin(this.player!.angle) * this.PLAYER_VELOCITY;
+        }
+
+        if (this.keyState['ArrowLeft']) {
+
+            this.player!.angle -= 0.15;
+        }
+
+        if (this.keyState['ArrowRight']) {
+
+            this.player!.angle += 0.15;
+        }
     }
 }
