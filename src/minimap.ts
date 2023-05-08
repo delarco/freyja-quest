@@ -76,7 +76,14 @@ export class Minimap {
             const dx = this.minimapTileSize.width / this.map.tileSize * ray.destination.x;
             const dy = this.minimapTileSize.height / this.map.tileSize * ray.destination.y;
 
-            this.renderer.drawLine(sx, sy, dx, dy, 1, Color.GREEN);
+            let color = Color.WHITE;
+
+            if (ray.collidedTile) {
+
+                color = Color.shade(ray.collidedTile.minimapColor, 1.3);
+            }
+
+            this.renderer.drawLine(sx, sy, dx, dy, 1, color);
         }
     }
 
