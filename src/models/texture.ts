@@ -89,7 +89,7 @@ export class Texture {
        return texture;
     }
 
-    public static makeBricks(size: Size): Texture {
+    public static makeBricks(size: Size, fillColor: Color, debugBorders: boolean = false): Texture {
 
         const texture = new Texture('bricks', size);
 
@@ -105,16 +105,34 @@ export class Texture {
                     || (x == Math.trunc(size.width / 4) * 3 && y > size.height / 2)
                 )
                 ? new Color(99, 69, 44)
-                : new Color(200, 140, 90)
+                : fillColor//new Color(200, 140, 90)
+
+                color = (
+                    debugBorders 
+                    && (
+                        x == 0
+                        || y == 0
+                        || x == size.width - 1
+                        || y == size.height - 1
+                    )
+                )
+                ? Color.BLACK
+                : color
 
                 texture.data.push(color)
             }
         }
 
+        if(debugBorders) {
+
+            texture.drawPixel(1, 1, Color.RED);
+            texture.drawPixel(texture.size.width - 2, texture.size.height - 2, Color.GREEN);
+        }
+
         return texture;
     }
 
-    public static makeWall(size: Size, debugBorders: boolean = false): Texture {
+    public static makeWall(size: Size, fillColor: Color, debugBorders: boolean = false): Texture {
 
         const texture = new Texture('bricks', size);
 
@@ -132,7 +150,7 @@ export class Texture {
                     )
                 )
                 ? Color.BLACK
-                : new Color(240, 240, 200)
+                : fillColor
 
                 texture.data.push(color);
             }

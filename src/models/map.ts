@@ -30,8 +30,10 @@ export class Map {
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
         const map = new Map(width, height, tileSize);
-        const floorTexture = Texture.makeBricks(new Size(32, 32));
-        const wallTexture = Texture.makeWall(new Size(32, 32), true);
+        const floorTexture1 = Texture.makeBricks(new Size(64, 64), new Color(200, 140, 90), true);
+        const floorTexture2 = Texture.makeBricks(new Size(64, 64), new Color(90, 140, 200), true);
+        const wallTexture1 = Texture.makeWall(new Size(32, 32), new Color(255, 255, 100), true);
+        const wallTexture2 = Texture.makeWall(new Size(32, 32), new Color(255, 100, 100), true);
 
         for (let y of ArrayUtils.range(map.size.height)) {
             for (let x of ArrayUtils.range(map.size.width)) {
@@ -70,8 +72,13 @@ export class Map {
                 tile.collision = isWall;
                 tile.index = new Point(x, y);
                 tile.position = new Point(x * tileSize, y * tileSize);
-                tile.floor = floorTexture;
-                tile.wall = wallTexture;
+                tile.floor = floorTexture1;
+                tile.wall = wallTexture1;
+
+                if(x == 1 && y == 1) tile.wall = wallTexture2;
+                
+
+                if(x % 2 == y % 2)  tile.floor = floorTexture2;
 
                 map.tiles[y * map.size.width + x] = tile;
             }
