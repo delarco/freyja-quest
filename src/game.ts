@@ -10,6 +10,7 @@ import { Debugger } from "./debugger";
 import { MathUtils } from "./utils/math-utils";
 import { World } from "./world";
 import { Canvas2DImageDataRenderer } from "./renderer/canvas-2d-image-data-renderer";
+import { AssetsManager } from "./assets-manager";
 
 export class Game {
 
@@ -69,11 +70,12 @@ export class Game {
     private world: World | null = null;
 
     /**
-     * Initialize map, minimap, world and renderers.
+     * Initialize assets manager, map, minimap, world and renderers.
      * @param minimapCanvas 
      */
     public initialize(minimapCanvas: HTMLCanvasElement, worldCanvas: HTMLCanvasElement): void {
 
+        AssetsManager.Instance.initialize();
         this.map = Map.createTestMap(20, 20, this.TILE_SIZE);
         this.player = new Player(new Point(112, 67), 2.7);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);

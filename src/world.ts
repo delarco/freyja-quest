@@ -1,3 +1,4 @@
+import { AssetsManager } from "./assets-manager";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
@@ -21,7 +22,7 @@ export class World {
         private player: Player,
         private rayCaster: RayCaster) {
 
-        this.skyboxTexture = Texture.makeSkyBox(this.resolution.height / 2);
+        this.skyboxTexture = AssetsManager.makeSkyBoxTexture(this.resolution.height / 2);
     }
 
     public drawSkybox(ray: Ray): void {

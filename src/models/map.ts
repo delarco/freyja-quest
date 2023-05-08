@@ -1,8 +1,8 @@
+import { AssetsManager } from "../assets-manager";
 import { ArrayUtils } from "../utils/array-utils";
 import { Color } from "./color";
 import { Point } from "./point";
 import { Size } from "./size";
-import { Texture } from "./texture";
 import { Tile } from "./tile";
 
 export class Map {
@@ -30,10 +30,10 @@ export class Map {
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
         const map = new Map(width, height, tileSize);
-        const floorTexture1 = Texture.makeBricks(new Size(64, 64), new Color(200, 140, 90), true);
-        const floorTexture2 = Texture.makeBricks(new Size(64, 64), new Color(90, 140, 200), true);
-        const wallTexture1 = Texture.makeWall(new Size(32, 32), new Color(255, 255, 100), true);
-        const wallTexture2 = Texture.makeWall(new Size(32, 32), new Color(255, 100, 100), true);
+        const floorTexture1 = AssetsManager.makeBricksTexture(new Size(64, 64), new Color(200, 140, 90), true);
+        const floorTexture2 = AssetsManager.makeBricksTexture(new Size(64, 64), new Color(90, 140, 200), true);
+        const wallTexture1 = AssetsManager.makeWallTexture(new Size(32, 32), new Color(255, 255, 100), true);
+        const wallTexture2 = AssetsManager.makeWallTexture(new Size(32, 32), new Color(255, 100, 100), true);
 
         for (let y of ArrayUtils.range(map.size.height)) {
             for (let x of ArrayUtils.range(map.size.width)) {
