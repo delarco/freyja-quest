@@ -26,7 +26,7 @@ export class Game {
     /**
      * Tile size in world
      */
-    private readonly TILE_SIZE = 20;
+    private readonly TILE_SIZE = 32;
 
     /**
      * Key State
@@ -75,7 +75,7 @@ export class Game {
     public initialize(minimapCanvas: HTMLCanvasElement, worldCanvas: HTMLCanvasElement): void {
 
         this.map = Map.createTestMap(20, 20, this.TILE_SIZE);
-        this.player = new Player(new Point(39, 48));
+        this.player = new Player(new Point(112, 67), 2.7);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
 
         const minimapRenderer = new Canvas2DRenderer(minimapCanvas, this.minimapResolution, this.minimapScreenSize);
