@@ -135,6 +135,7 @@ export class Game {
         this.rayCaster!.cast(this.player!.position, this.player!.angle);
         this.draw();
         Debugger.update();
+        Debugger.firstFrame = false;
 
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
     }

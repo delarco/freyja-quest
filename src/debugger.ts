@@ -16,6 +16,8 @@ export class Debugger {
     public static set map(map: Map) { Debugger._map = map; }
     public static set player(player: Player) { Debugger._player = player; }
 
+    public static firstFrame: boolean = true;
+
     public static update(): void {
 
         this.fpsInfo.innerText = this._clock?.fps.toString();
