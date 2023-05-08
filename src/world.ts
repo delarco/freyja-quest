@@ -26,6 +26,7 @@ export class World {
 
     public drawSkybox(ray: Ray): void {
 
+        // TODO: draw only before wall
         const x = ray.index;
         const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
 
@@ -39,6 +40,7 @@ export class World {
 
     public drawFloor(ray: Ray): void {
 
+        // TODO: draw only after wall
         const halfVerticalRes = this.resolution.height / 2;
 
         const sin = Math.sin(ray.angle);
@@ -57,17 +59,16 @@ export class World {
             const tile = this.map.getTileFromPosition(new Point(x, y));
             let tex = tile?.floor;
 
-            if(!tex) tex = Texture.EMPTY;
+            if(!tex) continue;
 
-            let tx = Math.floor(x * 2 % 1 * (tex.size.width - 1));
-            let ty = Math.floor(y * 2 % 1 * (tex.size.height - 1));
+            let tx = Math.floor(x % 1 * (tex.size.width - 1));
+            let ty = Math.floor(y % 1 * (tex.size.height - 1));
 
             if (tx < 0) tx = tex.size.width + tx - 1;
             if (ty < 0) ty = tex.size.height + ty - 1;
 
             const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
             const color = Color.shade(tex.getPixelColor(tx, ty), shade);
-
             this.renderer.drawPixel(pixelX, pixelY, color);
         }
     }
