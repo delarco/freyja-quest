@@ -59,7 +59,7 @@ export class World {
             const tile = this.map.getTileFromPosition(new Point(x, y));
             let tex = tile?.floor;
 
-            if(!tex) continue;
+            if (!tex) continue;
 
             let tx = Math.floor(x % 1 * (tex.size.width - 1));
             let ty = Math.floor(y % 1 * (tex.size.height - 1));
@@ -87,26 +87,61 @@ export class World {
 
             if (!ray.collidedTile) continue;
 
+            const texture = ray.collidedTile.wall;
             const ca = MathUtils.fixAngle(this.player.angle - ray.angle);
             const distance = ray.size * Math.cos(ca);
 
             let lineHeight = Math.floor((this.map.tileSize * this.resolution.height) / distance);
+            let textureStepY = texture.size.height / lineHeight;
+            let textureOffsetY = 0;
 
             if (lineHeight > this.resolution.height) {
 
+                textureOffsetY = (lineHeight - this.resolution.height) / 2;
                 lineHeight = this.resolution.height;
             }
 
             const x = index * lineWidth;
             const lineOffsetY = Math.floor(halfVerticalRes - lineHeight / 2);
 
-            let color = new Color(100, 100, 100);
-            if (!ray.hitVerticalFirst) color = Color.shade(color, 0.6);
+            let textureY = textureOffsetY * textureStepY;
+            let textureX = 0;
 
-            const shade = 0.2 + 0.8 * (1 - distance / halfVerticalRes);
-            color = Color.shade(color, shade);
+            if (!ray.hitVerticalFirst) {
 
-            this.renderer.drawRect(x, lineOffsetY, lineWidth, lineHeight, color);
+                const tileSizeOverTexWidth = this.map.tileSize / texture.size.width;
+
+                textureX = (ray.destination.x / tileSizeOverTexWidth) % texture.size.width;
+                if (ray.angle > MathUtils.rad180) textureX = texture.size.width - textureX;
+            }
+
+            if (ray.hitVerticalFirst) {
+
+                const tileOverTexWidth = this.map.tileSize / texture.size.width;
+
+                textureX = (ray.destination.y / tileOverTexWidth) % texture.size.width;
+                if (ray.angle > MathUtils.rad90 && ray.angle < MathUtils.rad270) textureX = texture.size.width - textureX;
+            }
+
+            const roundTextureX = Math.floor(textureX);
+
+            for (let y = lineOffsetY; y < lineOffsetY + lineHeight; y++) {
+
+                let roundTextureY = Math.floor(textureY)
+                if (roundTextureY > texture.size.height - 1) roundTextureY = texture.size.height - 1;
+
+                let color = texture.getPixelColor(roundTextureX, roundTextureY) || Color.WHITE;
+                if (!ray.hitVerticalFirst) color = Color.shade(color, 0.6);
+
+                const shade = 0.2 + 0.8 * (1 - distance / halfVerticalRes);
+                color = Color.shade(color, shade);
+
+                textureY += textureStepY;
+
+                for (let offsetX = 0; offsetX < lineWidth; offsetX++)
+                    this.renderer.drawPixel(x + offsetX, y, color);
+            }
+
         }
     }
 
