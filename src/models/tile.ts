@@ -9,6 +9,7 @@ export class Tile {
     public index: Point;
     public position: Point;
     public floor: Texture;
+    public wall: Texture;
 
     constructor() {
         
@@ -17,5 +18,6 @@ export class Tile {
         this.index = new Point();
         this.position = new Point();
         this.floor = Texture.EMPTY;
+        this.wall = Texture.EMPTY;
     }
 }

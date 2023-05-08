@@ -113,4 +113,37 @@ export class Texture {
 
         return texture;
     }
+
+    public static makeWall(size: Size, debugBorders: boolean = false): Texture {
+
+        const texture = new Texture('bricks', size);
+
+        for(let y of ArrayUtils.range(size.height)) {
+
+            for(let x of ArrayUtils.range(size.width)) {
+
+                let color = (
+                    debugBorders 
+                    && (
+                        x == 0
+                        || y == 0
+                        || x == size.width - 1
+                        || y == size.height - 1
+                    )
+                )
+                ? Color.BLACK
+                : new Color(240, 240, 200)
+
+                texture.data.push(color);
+            }
+        }
+
+        if(debugBorders) {
+
+            texture.drawPixel(1, 1, Color.RED);
+            texture.drawPixel(texture.size.width - 2, texture.size.height - 2, Color.GREEN);
+        }
+
+        return texture;
+    }
 }

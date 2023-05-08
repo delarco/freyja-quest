@@ -31,6 +31,7 @@ export class Map {
 
         const map = new Map(width, height, tileSize);
         const floorTexture = Texture.makeBricks(new Size(32, 32));
+        const wallTexture = Texture.makeWall(new Size(32, 32), true);
 
         for (let y of ArrayUtils.range(map.size.height)) {
             for (let x of ArrayUtils.range(map.size.width)) {
@@ -44,21 +45,33 @@ export class Map {
                     || (x == map.size.width - 1 && y > 6)
                     || (y == map.size.height - 1)
                     || (x == 1 && y == 1)
-                    || (x == 4 && y > 3 && y < 15 )
-                    || (x == 16 && y > 8 && y < 15 )
-                    || (x > 5 && x < 15 && y == 12 )
-                    || (x >= 16 && x <= 17 && y >= 2 && y <= 3 )
-                    || (x >= 10 && x <= 11 && y >= 5 && y <= 6 )
+                    || (x == 4 && y > 3 && y < 15)
+                    || (x == 16 && y > 8 && y < 15)
+                    || (x > 5 && x < 15 && y == 12)
+                    || (x >= 16 && x <= 17 && y >= 2 && y <= 3)
+                    || (x >= 10 && x <= 11 && y >= 5 && y <= 6)
                 )
 
                 tile.minimapColor = isWall
                     ? new Color(170, 170, 170)
-                    : new Color(221, 221, 221);
+                    : new Color(240, 240, 240);
+
+                if (
+                    (x >= 16 && x <= 17 && y >= 2 && y <= 3)
+                    || (x >= 10 && x <= 11 && y >= 5 && y <= 6)
+                ) tile.minimapColor = new Color(221, 170, 170);
+
+                if (x > 5 && x < 15 && y == 12) tile.minimapColor = new Color(170, 221, 170);
+
+                if (x == 4 && y > 3 && y < 15) tile.minimapColor = new Color(170, 170, 221);
+
+                if (x == 16 && y > 8 && y < 15) tile.minimapColor = new Color(221, 221, 170);
 
                 tile.collision = isWall;
                 tile.index = new Point(x, y);
                 tile.position = new Point(x * tileSize, y * tileSize);
                 tile.floor = floorTexture;
+                tile.wall = wallTexture;
 
                 map.tiles[y * map.size.width + x] = tile;
             }
