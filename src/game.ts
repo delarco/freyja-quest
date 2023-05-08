@@ -76,7 +76,7 @@ export class Game {
     public initialize(minimapCanvas: HTMLCanvasElement, worldCanvas: HTMLCanvasElement): void {
 
         AssetsManager.Instance.initialize();
-        this.map = Map.createTestMap(20, 20, this.TILE_SIZE);
+        this.map = AssetsManager.createTestMap(20, 20, this.TILE_SIZE);
         this.player = new Player(new Point(112, 67), 2.7);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
 
