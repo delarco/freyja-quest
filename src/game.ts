@@ -20,6 +20,7 @@ export class Game {
     private readonly worldScreenSize = new Size(800, 600);
 
     private readonly PLAYER_VELOCITY = 4;
+    private readonly PLAYER_ROTATION = 0.15;
     private readonly RAYS_TO_CAST = this.worldResolution.width;
 
     /**
@@ -185,12 +186,12 @@ export class Game {
 
         if (this.keyState['ArrowLeft']) {
 
-            this.player!.angle = MathUtils.fixAngle(this.player!.angle + 0.15);
+            this.player!.angle = MathUtils.fixAngle(this.player!.angle + this.PLAYER_ROTATION);
         }
 
         if (this.keyState['ArrowRight']) {
 
-            this.player!.angle = MathUtils.fixAngle(this.player!.angle - 0.15);
+            this.player!.angle = MathUtils.fixAngle(this.player!.angle - this.PLAYER_ROTATION);
         }
     }
 }
