@@ -24,7 +24,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
-            "floor": "test-32x32.tex",
+            "floor": "bricks-sand.tex",
             "index": {
                 "x": 1,
                 "y": 0
@@ -110,6 +110,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "bricks-sand.tex",
             "index": {
                 "x": 0,
                 "y": 1
@@ -119,6 +120,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 1,
                 "y": 1
@@ -128,6 +130,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 2,
                 "y": 1
@@ -137,6 +140,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 3,
                 "y": 1
@@ -146,6 +150,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 4,
                 "y": 1
@@ -155,6 +160,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 5,
                 "y": 1
@@ -164,6 +170,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 6,
                 "y": 1
@@ -173,6 +180,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 7,
                 "y": 1
@@ -182,6 +190,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 8,
                 "y": 1
@@ -200,6 +209,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 0,
                 "y": 2
@@ -209,6 +219,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 1,
                 "y": 2
@@ -228,6 +239,7 @@
             "minimapColor": [196, 196, 196],
             "collision": false,
             "wall": "rocks.tex",
+            "floor": "rocks-sand.tex",
             "index": {
                 "x": 3,
                 "y": 2
@@ -668,7 +680,7 @@
         {
             "minimapColor": [255, 255, 128],
             "collision": true,
-            "wall": "rocks-sand.tex",
+            "wall": "bricks-sand.tex",
             "index": {
                 "x": 2,
                 "y": 7
@@ -677,7 +689,7 @@
         {
             "minimapColor": [255, 255, 128],
             "collision": true,
-            "wall": "rocks-sand.tex",
+            "wall": "bricks-sand.tex",
             "index": {
                 "x": 3,
                 "y": 7
@@ -686,7 +698,7 @@
         {
             "minimapColor": [255, 255, 128],
             "collision": true,
-            "wall": "rocks-sand.tex",
+            "wall": "bricks-sand.tex",
             "index": {
                 "x": 4,
                 "y": 7
@@ -695,7 +707,7 @@
         {
             "minimapColor": [255, 255, 128],
             "collision": true,
-            "wall": "rocks-sand.tex",
+            "wall": "bricks-sand.tex",
             "index": {
                 "x": 5,
                 "y": 7
@@ -704,7 +716,7 @@
         {
             "minimapColor": [255, 255, 128],
             "collision": true,
-            "wall": "rocks-sand.tex",
+            "wall": "bricks-sand.tex",
             "index": {
                 "x": 6,
                 "y": 7
