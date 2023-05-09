@@ -7,7 +7,7 @@ export enum AudioType {
 
 export class Audio {
 
-    public onPlayEnded = new TypedEvent<void>;
+    public onPlayEnded = new TypedEvent<void>();
 
     constructor(public filename: string, public type: AudioType, private audioElement: HTMLAudioElement) {
 
@@ -32,5 +32,10 @@ export class Audio {
     public play(): void {
 
         this.audioElement.play();
+    }
+
+    public pause(): void {
+
+        this.audioElement.pause();
     }
 }
