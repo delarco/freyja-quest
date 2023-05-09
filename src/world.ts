@@ -31,7 +31,7 @@ export class World {
         }
     }
 
-    public drawFloor(ray: Ray): void {
+    public drawFloorCeiling(ray: Ray): void {
 
         // TODO: draw only after wall
         const halfVerticalRes = this.resolution.height / 2;
@@ -46,7 +46,7 @@ export class World {
             const x = this.player.position.x / this.map.tileSize + cos * n;
             const y = this.player.position.y / this.map.tileSize - sin * n;
 
-            if(
+            if (
                 x < 0
                 || y < 0
                 || x > this.map.size.width
@@ -57,19 +57,34 @@ export class World {
             const pixelY = halfVerticalRes * 2 - j - 1;
 
             const tile = this.map.getTile(Math.floor(x), Math.floor(y));
-            let tex = tile?.floorTexture;
+            let floorTexure = tile?.floorTexture;
+            let ceilingTexture = tile?.ceilingTexture;
 
-            if (!tex) continue;
+            if (floorTexure) {
 
-            let tx = Math.floor(x % 1 * (tex.size.width - 1));
-            let ty = Math.floor(y % 1 * (tex.size.height - 1));
+                let tx = Math.floor(x % 1 * (floorTexure.size.width - 1));
+                let ty = Math.floor(y % 1 * (floorTexure.size.height - 1));
 
-            if (tx < 0) tx = tex.size.width + tx - 1;
-            if (ty < 0) ty = tex.size.height + ty - 1;
+                if (tx < 0) tx = floorTexure.size.width + tx - 1;
+                if (ty < 0) ty = floorTexure.size.height + ty - 1;
 
-            const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
-            const color = Color.shade(tex.getPixelColor(tx, ty), shade);
-            this.renderer.drawPixel(pixelX, pixelY, color);
+                const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
+                const color = Color.shade(floorTexure.getPixelColor(tx, ty), shade);
+                this.renderer.drawPixel(pixelX, pixelY, color);
+            }
+
+            if (ceilingTexture) {
+
+                let tx = Math.floor(x % 1 * (ceilingTexture.size.width - 1));
+                let ty = Math.floor(y % 1 * (ceilingTexture.size.height - 1));
+
+                if (tx < 0) tx = ceilingTexture.size.width + tx - 1;
+                if (ty < 0) ty = ceilingTexture.size.height + ty - 1;
+
+                const shade = 0.2 + 0.8 * (1 - j / halfVerticalRes);
+                const color = Color.shade(ceilingTexture.getPixelColor(tx, ty), shade);
+                this.renderer.drawPixel(pixelX, this.resolution.height - pixelY, color);
+            }
         }
     }
 
@@ -83,7 +98,7 @@ export class World {
             const ray = this.rayCaster.rays[index];
 
             this.drawSkybox(ray);
-            this.drawFloor(ray);
+            this.drawFloorCeiling(ray);
 
             if (!ray.collidedTile) continue;
 

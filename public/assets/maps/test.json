@@ -121,6 +121,7 @@
             "collision": false,
             "wall": "rocks.tex",
             "floor": "rocks-sand.tex",
+            "ceiling": "test-32x32.tex",
             "index": {
                 "x": 1,
                 "y": 1
