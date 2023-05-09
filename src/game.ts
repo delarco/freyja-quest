@@ -113,13 +113,7 @@ export class Game {
      */
     public run(): void {
 
-        const music = this.map?.musics[0];
-
-        if (music) {
-            music.volume = 0.3;
-            music.play();
-        }
-
+        this.playNextMusic();
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
     }
 
@@ -221,5 +215,21 @@ export class Game {
         if (!this.player) return;
 
         this.player.angle = MathUtils.fixAngle(this.player.angle - this.PLAYER_ROTATION * mov.x * 0.02);
+    }
+
+    private playNextMusic(): void {
+
+        const music = this.map?.musics[0];
+
+        if (music) {
+            
+            music.onPlayEnded.on(() => {
+                // TODO: play next music
+            });
+            
+            music.loop = true;
+            music.volume = 0.3;
+            music.play();
+        }
     }
 }

@@ -45,6 +45,7 @@ export class AssetsManager {
 
         // load music
         AssetsManager.loadAudio('medieval-chateau.mp3', AudioType.MUSIC);
+        AssetsManager.loadAudio('test.wav', AudioType.SOUND_EFFECT);
     }
 
     /**
@@ -472,7 +473,18 @@ export class AssetsManager {
 
         // TODO: check if audio is already loaded
 
-        const audioElement = new window.Audio(`assets/musics/${filename}`);
+        let typeDir = '';
+
+        switch(type) {
+
+            case AudioType.MUSIC: typeDir= 'musics'; break;
+            case AudioType.SOUND_EFFECT: typeDir= 'sounds'; break;
+        }
+
+        const url = `assets/${typeDir}/${filename}`;
+        const audioElement = new window.Audio(url);
+        audioElement.preload = "metadata";
+
         const audio = new Audio(filename, type, audioElement);
         AssetsManager.audios.push(audio);
         return audio;
