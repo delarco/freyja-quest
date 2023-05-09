@@ -1,7 +1,6 @@
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
-import { Point } from "./models/point";
 import { Ray } from "./models/ray";
 import { Size } from "./models/size";
 import { RayCaster } from "./ray-caster";
@@ -47,10 +46,12 @@ export class World {
             const x = this.player.position.x / this.map.tileSize + cos * n;
             const y = this.player.position.y / this.map.tileSize - sin * n;
 
+            if(x < 0 || y < 0) continue;
+
             const pixelX = ray.index;
             const pixelY = halfVerticalRes * 2 - j - 1;
 
-            const tile = this.map.getTileFromPosition(new Point(x, y));
+            const tile = this.map.getTile(Math.floor(x), Math.floor(y));
             let tex = tile?.floorTexture;
 
             if (!tex) continue;
