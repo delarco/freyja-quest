@@ -4,7 +4,7 @@
         "width": 10,
         "height": 10
     },
-    "skybox": "skybox-day",
+    "skybox": "skybox-night.png",
     "spawnLocations": [
         { "x": 210, "y": 180, "a": 2.6 },
         { "x": 82, "y": 40, "a": 5.6 }
