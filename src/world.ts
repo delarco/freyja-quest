@@ -46,7 +46,12 @@ export class World {
             const x = this.player.position.x / this.map.tileSize + cos * n;
             const y = this.player.position.y / this.map.tileSize - sin * n;
 
-            if(x < 0 || y < 0) continue;
+            if(
+                x < 0
+                || y < 0
+                || x > this.map.size.width
+                || y > this.map.size.height
+            ) continue;
 
             const pixelX = ray.index;
             const pixelY = halfVerticalRes * 2 - j - 1;
@@ -142,6 +147,7 @@ export class World {
 
     public draw(): void {
 
+        this.renderer.clear(Color.WHITE);
         this.drawRays();
         this.renderer.swapBuffer();
     }
