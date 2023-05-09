@@ -22,9 +22,9 @@ export class MapUtils {
             tile.collision = raw.collision;
             tile.index = new Point(raw.index.x, raw.index.y);
             tile.position = new Point(raw.index.x * tileSize, raw.index.y * tileSize);
-            tile.wall = raw.wall;
-            tile.floor = raw.floor;
-            tile.ceiling = raw.ceiling;
+            tile.wall = raw.wall || "";
+            tile.floor = raw.floor || "";
+            tile.ceiling = raw.ceiling || "";
 
             return tile;
         });
