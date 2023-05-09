@@ -14,6 +14,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 0,
                 "y": 0
@@ -23,6 +24,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 1,
                 "y": 0
@@ -32,6 +34,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 2,
                 "y": 0
@@ -41,6 +44,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 3,
                 "y": 0
@@ -50,6 +54,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 4,
                 "y": 0
@@ -59,6 +64,7 @@
             "minimapColor": [64, 64, 64],
             "collision": true,
             "wall": "rocks.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 5,
                 "y": 0
@@ -209,9 +215,10 @@
             }
         },
         {
-            "minimapColor": [64, 128, 64],
+            "minimapColor": [128, 128, 128],
             "collision": true,
-            "wall": "rocks-green.tex",
+            "wall": "test-32x32.tex",
+            "floor": "test-32x32.tex",
             "index": {
                 "x": 2,
                 "y": 2

@@ -362,12 +362,12 @@ export class AssetsManager {
                 tile.collision = isWall;
                 tile.index = new Point(x, y);
                 tile.position = new Point(x * tileSize, y * tileSize);
-                tile.floor = floorTexture;
-                tile.wall = wallTexture1;
+                tile.floorTexture = floorTexture;
+                tile.wallTexture = wallTexture1;
 
-                if (x == 1 && y == 1) tile.wall = wallTexture2;
+                if (x == 1 && y == 1) tile.wallTexture = wallTexture2;
 
-                if (x % 2 == y % 2) tile.floor = floorTexture!;
+                if (x % 2 == y % 2) tile.floorTexture = floorTexture!;
 
                 map.tiles[y * map.size.width + x] = tile;
             }
@@ -404,11 +404,11 @@ export class AssetsManager {
      */
     public static async loadMapTextures(map: Map): Promise<void> {
 
-        const textureList = new Set(
-            map.tiles
-                .map(tile => tile.wall)
-                .filter(f => typeof (f) == "string" && f)
-        );
+        const textureList = new Set([
+            ...map.tiles.map(tile => tile.wall),
+            ...map.tiles.map(tile => tile.floor),
+            ...map.tiles.map(tile => tile.ceiling)
+        ]);
 
         for (let filename of textureList) {
 
@@ -416,7 +416,7 @@ export class AssetsManager {
 
             map.tiles
                 .filter(f => f.wall == filename)
-                .forEach(tile => tile.wall = texture);
+                .forEach(tile => tile.wallTexture = texture);
         }
     }
 }

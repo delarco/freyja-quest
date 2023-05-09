@@ -51,7 +51,7 @@ export class World {
             const pixelY = halfVerticalRes * 2 - j - 1;
 
             const tile = this.map.getTileFromPosition(new Point(x, y));
-            let tex = tile?.floor;
+            let tex = tile?.floorTexture;
 
             if (!tex) continue;
 
@@ -81,7 +81,7 @@ export class World {
 
             if (!ray.collidedTile) continue;
 
-            const texture = ray.collidedTile.wall;
+            const texture = ray.collidedTile.wallTexture;
             const ca = MathUtils.fixAngle(this.player.angle - ray.angle);
             const distance = ray.size * Math.cos(ca);
 

@@ -8,8 +8,12 @@ export class Tile {
     public collision: boolean;
     public index: Point;
     public position: Point;
-    public floor: Texture;
-    public wall: Texture | string;
+    public floorTexture: Texture;
+    public floor: string;
+    public wallTexture: Texture;
+    public wall: string;
+    public ceilingTexture: Texture;
+    public ceiling: string;
 
     constructor() {
         
@@ -17,7 +21,11 @@ export class Tile {
         this.collision = true;
         this.index = new Point();
         this.position = new Point();
-        this.floor = Texture.EMPTY;
-        this.wall = Texture.EMPTY;
+        this.floorTexture = Texture.EMPTY;
+        this.floor = '';
+        this.wallTexture = Texture.EMPTY;
+        this.wall = '';
+        this.ceilingTexture = Texture.EMPTY;
+        this.ceiling = '';
     }
 }
