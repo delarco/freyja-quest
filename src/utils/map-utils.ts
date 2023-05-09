@@ -38,7 +38,8 @@ export class MapUtils {
             tileSize,
             tiles,
             jsonData.spawnLocations,
-            skyboxTexture
+            skyboxTexture,
+            jsonData.music
         );
 
         return map;

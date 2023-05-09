@@ -1,3 +1,4 @@
+import { Audio, AudioType } from "./models/audio";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Point } from "./models/point";
@@ -15,6 +16,7 @@ export class AssetsManager {
     private static tileSize: number;
     public static readonly textures: Array<Texture> = [];
     public static readonly maps: Array<Map> = [];
+    public static readonly audios: Array<Audio> = [];
 
     public static get Instance() {
 
@@ -40,6 +42,9 @@ export class AssetsManager {
 
         // load test map
         await AssetsManager.loadMap('test.json');
+
+        // load music
+        AssetsManager.loadAudio('medieval-chateau.mp3', AudioType.MUSIC);
     }
 
     /**
@@ -290,13 +295,13 @@ export class AssetsManager {
 
                         if (debugBorders) {
 
-                            for(let x of ArrayUtils.range(texture.size.width)) {
+                            for (let x of ArrayUtils.range(texture.size.width)) {
 
                                 texture.drawPixel(x, 0, Color.BLACK);
                                 texture.drawPixel(x, texture.size.height - 1, Color.BLACK);
                             }
 
-                            for(let y of ArrayUtils.range(texture.size.height)) {
+                            for (let y of ArrayUtils.range(texture.size.height)) {
 
                                 texture.drawPixel(0, y, Color.BLACK);
                                 texture.drawPixel(texture.size.width - 1, y, Color.BLACK);
@@ -421,7 +426,7 @@ export class AssetsManager {
      * Load all textures required by a map
      * @param map Map object
      */
-    public static async loadMapTextures(map: Map): Promise<void> {
+    public static async loadMapAssets(map: Map): Promise<void> {
 
         const textureList = new Set([
             ...map.tiles.map(tile => tile.wall),
@@ -431,8 +436,8 @@ export class AssetsManager {
 
         for (let filename of textureList) {
 
-            if(!filename) continue;
-            
+            if (!filename) continue;
+
             const texture = await AssetsManager.loadTexture(filename as string);
 
             map.tiles
@@ -447,5 +452,38 @@ export class AssetsManager {
                 .filter(f => f.ceiling == filename)
                 .forEach(tile => tile.ceilingTexture = texture);
         }
+
+        const musicList = new Array<Audio>();
+
+        for (let musicFile of map.musicList) {
+
+            musicList.push(AssetsManager.loadAudio(musicFile, AudioType.MUSIC));
+        }
+
+        map.musics = musicList;
+    }
+
+    /**
+     * Load audio from assets.
+     * @param filename 
+     * @returns 
+     */
+    public static loadAudio(filename: string, type: AudioType): Audio {
+
+        // TODO: check if audio is already loaded
+
+        const audioElement = new window.Audio(`assets/musics/${filename}`);
+        const audio = new Audio(filename, type, audioElement);
+        AssetsManager.audios.push(audio);
+        return audio;
+    }
+
+    /**
+     * Returns an audio by it's file name.
+     * @param name Audio file name
+     */
+    public static getAudio(filename: string): Audio | null {
+
+        return AssetsManager.audios.find(audio => audio.filename == filename) || null;
     }
 }

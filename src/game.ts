@@ -79,7 +79,7 @@ export class Game {
         await AssetsManager.Instance.initialize(this.worldResolution, this.TILE_SIZE);
 
         this.map = AssetsManager.getMap('Test Map')!;
-        await AssetsManager.loadMapTextures(this.map);
+        await AssetsManager.loadMapAssets(this.map);
 
         const spawnLoc = this.map.getRandomSpawnLocation();
         this.player = new Player(new Point(spawnLoc.x, spawnLoc.y), spawnLoc.a);
@@ -112,6 +112,13 @@ export class Game {
      * Runs the game.
      */
     public run(): void {
+
+        const music = this.map?.musics[0];
+
+        if (music) {
+            music.volume = 0.3;
+            music.play();
+        }
 
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
     }
@@ -167,9 +174,9 @@ export class Game {
             const newYPos = new Point(this.player!.position.x, this.player!.position.y + mov.y);
             const tileX = this.map!.getTileFromPosition(newXPos);
             const tileY = this.map!.getTileFromPosition(newYPos);
-            
-            if(!tileX?.collision && newXPos.x > 0 && newXPos.x < this.map!.worldSize.width) this.player!.position.x += mov.x;
-            if(!tileY?.collision && newYPos.y > 0 && newYPos.y < this.map!.worldSize.height) this.player!.position.y += mov.y;
+
+            if (!tileX?.collision && newXPos.x > 0 && newXPos.x < this.map!.worldSize.width) this.player!.position.x += mov.x;
+            if (!tileY?.collision && newYPos.y > 0 && newYPos.y < this.map!.worldSize.height) this.player!.position.y += mov.y;
         };
 
         if (this.keyState['ArrowUp']) {
@@ -211,7 +218,7 @@ export class Game {
      */
     public mouseMovement(mov: Vector2) {
 
-        if(!this.player) return;
+        if (!this.player) return;
 
         this.player.angle = MathUtils.fixAngle(this.player.angle - this.PLAYER_ROTATION * mov.x * 0.02);
     }
