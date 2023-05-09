@@ -1,5 +1,6 @@
 import { Color } from "../models/color";
 import { Size } from "../models/size";
+import { Texture } from "../models/texture";
 import { IRenderer } from "./renderer";
 
 export class Canvas2DRenderer implements IRenderer {
@@ -62,6 +63,10 @@ export class Canvas2DRenderer implements IRenderer {
     drawPixel(x: number, y: number, color: Color): void {
 
         this.drawRect(x, y, 1, 1, color);
+    }
+
+    drawTexture(x: number, y: number, texture: Texture): void {
+        throw new Error("Method not implemented.");
     }
 
     swapBuffer(): void {

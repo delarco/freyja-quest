@@ -1,5 +1,7 @@
 import { Color } from "../models/color";
 import { Size } from "../models/size";
+import { Texture } from "../models/texture";
+import { ArrayUtils } from "../utils/array-utils";
 import { IRenderer } from "./renderer";
 
 export class Canvas2DImageDataRenderer implements IRenderer {
@@ -60,6 +62,17 @@ export class Canvas2DImageDataRenderer implements IRenderer {
         this.buffer![index + 1] = color.g;
         this.buffer![index + 2] = color.b;
         this.buffer![index + 3] = color.a;
+    }
+
+    drawTexture(x: number, y: number, texture: Texture): void {
+        
+        for(let ty of ArrayUtils.range(texture.size.height)) {
+
+            for(let tx of ArrayUtils.range(texture.size.width)) {
+
+                this.drawPixel(x + tx, y + ty, texture.getPixelColor(tx, ty))
+            }
+        }
     }
 
     swapBuffer(): void {

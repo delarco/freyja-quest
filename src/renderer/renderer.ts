@@ -1,4 +1,5 @@
 import { Color } from "../models/color";
+import { Texture } from "../models/texture";
 
 export interface IRenderer {
 
@@ -11,6 +12,8 @@ export interface IRenderer {
     drawCircle(x: number, y: number, radius: number, borderColor: Color, fillColor: Color): void;
 
     drawPixel(x: number, y: number, color: Color): void;
+
+    drawTexture(x: number, y: number, texture: Texture): void;
 
     swapBuffer(): void;
 }
