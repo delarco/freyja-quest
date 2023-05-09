@@ -431,6 +431,8 @@ export class AssetsManager {
 
         for (let filename of textureList) {
 
+            if(!filename) continue;
+            
             const texture = await AssetsManager.loadTexture(filename as string);
 
             map.tiles
