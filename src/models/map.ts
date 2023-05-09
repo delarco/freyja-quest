@@ -1,5 +1,6 @@
 import { Point } from "./point";
 import { Size } from "./size";
+import { SpawnLocation } from "./spawn-location";
 import { Tile } from "./tile";
 
 export class Map {
@@ -9,8 +10,16 @@ export class Map {
     public readonly tiles: Array<Tile>;
     public readonly worldSize: Size;
     public readonly tileSize: number;
+    public readonly spawnLocations: Array<SpawnLocation>;
 
-    constructor(name: string, width: number, height: number, tileSize: number, tiles: Array<Tile>) {
+    constructor(
+        name: string,
+        width: number,
+        height: number,
+        tileSize:
+        number,
+        tiles: Array<Tile>,
+        spawnLocations: Array<SpawnLocation>) {
 
         this.name = name;
         this.tileSize = tileSize;
@@ -18,6 +27,7 @@ export class Map {
         this.tiles = new Array<Tile>(width * height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
         this.tiles = tiles;
+        this.spawnLocations = spawnLocations;
     }
 
     /**
@@ -46,5 +56,15 @@ export class Map {
         const y = Math.floor(position.y / this.tileSize);
 
         return this.getTile(x, y);
+    }
+
+    /**
+     * Get a random spawn location from map.
+     * @returns 
+     */
+    public getRandomSpawnLocation(): SpawnLocation {
+
+        const location = this.spawnLocations[Math.floor(Math.random() * this.spawnLocations.length)];
+        return location;
     }
 }

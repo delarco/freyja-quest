@@ -31,6 +31,7 @@ export class MapUtils {
             jsonData.size.height,
             tileSize,
             tiles,
+            jsonData.spawnLocations
         );
 
         return map;

@@ -80,7 +80,8 @@ export class Game {
         this.map = AssetsManager.getMap('Test Map')!;
         await AssetsManager.loadMapTextures(this.map);
 
-        this.player = new Player(new Point(112, 67), 2.7);
+        const spawnLoc = this.map.getRandomSpawnLocation();
+        this.player = new Player(new Point(spawnLoc.x, spawnLoc.y), spawnLoc.a);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
 
         const minimapRenderer = new Canvas2DRenderer(minimapCanvas, this.minimapResolution, this.minimapScreenSize);

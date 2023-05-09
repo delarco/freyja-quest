@@ -2,6 +2,7 @@ import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Point } from "./models/point";
 import { Size } from "./models/size";
+import { SpawnLocation } from "./models/spawn-location";
 import { Texture } from "./models/texture";
 import { Tile } from "./models/tile";
 import { ArrayUtils } from "./utils/array-utils";
@@ -267,7 +268,7 @@ export class AssetsManager {
      */
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
-        const map = new Map('Test Map', width, height, tileSize, []);
+        const map = new Map('Test Map', width, height, tileSize, [], [new SpawnLocation(112, 67, 2.7)]);
         const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
         const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
         const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;
@@ -350,9 +351,6 @@ export class AssetsManager {
      * @param map Map object
      */
     public static async loadMapTextures(map: Map): Promise<void> {
-
-        console.log(map);
-        
 
         const textureList = new Set(
             map.tiles
