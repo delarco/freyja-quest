@@ -5,20 +5,24 @@ import { Size } from "./models/size";
 import { Texture } from "./models/texture";
 import { Tile } from "./models/tile";
 import { ArrayUtils } from "./utils/array-utils";
+import { MapUtils } from "./utils/map-utils";
 import { TextureUtils } from "./utils/texture-utils";
 
 export class AssetsManager {
 
     private static _instance: AssetsManager;
+    private static tileSize: number;
     public static readonly textures: Array<Texture> = [];
-    public static maps: Array<Map> = [];
+    public static readonly maps: Array<Map> = [];
 
     public static get Instance() {
 
         return this._instance || (this._instance = new AssetsManager());
     }
 
-    public async initialize() {
+    public async initialize(tileSize: number) {
+
+        AssetsManager.tileSize = tileSize;
 
         // generate memory test textures
         AssetsManager.makeTestTexture('mem-test-32x32', new Size(32, 32));
@@ -27,6 +31,9 @@ export class AssetsManager {
         await AssetsManager.loadTexture('bricks.tex');
         await AssetsManager.loadTexture('rocks.tex');
         await AssetsManager.loadTexture('rocks-sand.tex');
+
+        // load test map
+        await AssetsManager.loadMap('test.json');
     }
 
     /**
@@ -230,7 +237,7 @@ export class AssetsManager {
 
                         const data = new Uint8Array(buffer);
                         const texture = TextureUtils.deserialize(data);
-                        
+
                         AssetsManager.textures.push(texture);
                         return resolve(texture);
                     })
@@ -260,7 +267,7 @@ export class AssetsManager {
      */
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
-        const map = new Map('Test Map', width, height, tileSize);
+        const map = new Map('Test Map', width, height, tileSize, []);
         const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
         const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
         const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;
@@ -314,5 +321,52 @@ export class AssetsManager {
         }
 
         return map;
+    }
+
+    /**
+     * Load map file from assets.
+     * @param filename 
+     * @returns 
+     */
+    public static async loadMap(filename: string): Promise<Map | Error> {
+
+        return fetch(`assets/maps/${filename}`)
+            .then(result => result.json())
+            .then((data: any) => {
+
+                const map = MapUtils.fromJson(data, AssetsManager.tileSize);
+                AssetsManager.maps.push(map);
+                return map;
+            })
+            .catch(error => {
+
+                alert(`Error loading texture: ${filename} (${error})`);
+                return new Error(error);
+            });
+    }
+
+    /**
+     * Load all textures required by a map
+     * @param map Map object
+     */
+    public static async loadMapTextures(map: Map): Promise<void> {
+
+        console.log(map);
+        
+
+        const textureList = new Set(
+            map.tiles
+                .map(tile => tile.wall)
+                .filter(f => typeof(f) == "string" && f)
+        );
+        
+        for(let filename of textureList) {
+
+            const texture = await AssetsManager.loadTexture(filename as string);
+
+            map.tiles
+                .filter(f => f.wall == filename)
+                .forEach(tile => tile.wall = texture);
+        }
     }
 }

@@ -9,7 +9,7 @@ export class Tile {
     public index: Point;
     public position: Point;
     public floor: Texture;
-    public wall: Texture;
+    public wall: Texture | string;
 
     constructor() {
         

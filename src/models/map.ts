@@ -10,13 +10,14 @@ export class Map {
     public readonly worldSize: Size;
     public readonly tileSize: number;
 
-    constructor(name: string, width: number, height: number, tileSize: number) {
+    constructor(name: string, width: number, height: number, tileSize: number, tiles: Array<Tile>) {
 
         this.name = name;
         this.tileSize = tileSize;
         this.size = new Size(width, height);
         this.tiles = new Array<Tile>(width * height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
+        this.tiles = tiles;
     }
 
     /**

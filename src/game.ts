@@ -75,8 +75,11 @@ export class Game {
      */
     public async initialize(minimapCanvas: HTMLCanvasElement, worldCanvas: HTMLCanvasElement): Promise<void> {
 
-        await AssetsManager.Instance.initialize();
-        this.map = AssetsManager.createTestMap(20, 20, this.TILE_SIZE);
+        await AssetsManager.Instance.initialize(this.TILE_SIZE);
+
+        this.map = AssetsManager.getMap('Test Map')!;
+        await AssetsManager.loadMapTextures(this.map);
+
         this.player = new Player(new Point(112, 67), 2.7);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
 
