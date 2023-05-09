@@ -15,13 +15,13 @@ export class App {
     /**
      * Initialize user interface and game.
      */
-    public start(): void {
+    public async start(): Promise<void> {
 
         this.userInterface.initialize();
         this.userInterface.onKeyDown.on(key => this.game.keyState[key] = true);
         this.userInterface.onKeyUp.on(key => this.game.keyState[key] = false);
 
-        this.game.initialize(
+        await this.game.initialize(
             this.userInterface.minimapCanvas,
             this.userInterface.worldCanvas
         );

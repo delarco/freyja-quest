@@ -5,6 +5,7 @@ import { Size } from "./models/size";
 import { Texture } from "./models/texture";
 import { Tile } from "./models/tile";
 import { ArrayUtils } from "./utils/array-utils";
+import { TextureUtils } from "./utils/texture-utils";
 
 export class AssetsManager {
 
@@ -21,6 +22,11 @@ export class AssetsManager {
 
         // generate memory test textures
         AssetsManager.makeTestTexture('mem-test-32x32', new Size(32, 32));
+
+        // load some textures
+        await AssetsManager.loadTexture('bricks.tex');
+        await AssetsManager.loadTexture('rocks.tex');
+        await AssetsManager.loadTexture('rocks-sand.tex');
     }
 
     /**
@@ -31,7 +37,7 @@ export class AssetsManager {
 
         return this.textures.find(texture => texture.name == name) || null;
     }
-    
+
     /**
      * Generates and returns a test texture.
      */
@@ -46,7 +52,7 @@ export class AssetsManager {
                 let color = new Color(255, 255, 255);
 
                 if (x == 0 && y != 0) color = Color.RED;
-                
+
                 if (y == 0 && x != 0) color = Color.GREEN;
 
                 if (x == size.width - 1 && y != 0) color = Color.BLUE;
@@ -54,16 +60,16 @@ export class AssetsManager {
                 if (y == size.height - 1 && x != 0) color = Color.ORANGE;
 
                 if (
-                    ( x == 0 && y == 0)
-                    || ( x == size.width - 1 && y == 0)
-                    || ( x == 0 && y == size.height - 1)
-                    || ( x == size.width - 1 && y == size.height - 1)
-                    || ( x == y)
-                    || ( x == 2 && y == 1)
-                    || ( x == 1 && y == 2)
-                 ) color = Color.BLACK;         
+                    (x == 0 && y == 0)
+                    || (x == size.width - 1 && y == 0)
+                    || (x == 0 && y == size.height - 1)
+                    || (x == size.width - 1 && y == size.height - 1)
+                    || (x == y)
+                    || (x == 2 && y == 1)
+                    || (x == 1 && y == 2)
+                ) color = Color.BLACK;
 
-                 texture.data.push(color);
+                texture.data.push(color);
             }
         }
 
@@ -96,10 +102,10 @@ export class AssetsManager {
                         y * 255 / texture.size.height
                     );
 
-                
-                if(
+
+                if (
                     debugBorders && (
-                        x == 0 
+                        x == 0
                         || y == 0
                         || x == texture.size.width - 1
                         || y == texture.size.height - 1
@@ -109,8 +115,8 @@ export class AssetsManager {
                 texture.drawPixel(x, y, color);
             }
         }
-        
-        if(debugBorders) texture.drawPixel(1, 1, Color.ORANGE);
+
+        if (debugBorders) texture.drawPixel(1, 1, Color.ORANGE);
 
         AssetsManager.textures.push(texture);
         return texture;
@@ -127,9 +133,9 @@ export class AssetsManager {
 
         const texture = new Texture('bricks', size);
 
-        for(let y of ArrayUtils.range(size.height)) {
+        for (let y of ArrayUtils.range(size.height)) {
 
-            for(let x of ArrayUtils.range(size.width)) {
+            for (let x of ArrayUtils.range(size.width)) {
 
                 let color = (
                     y == 0
@@ -138,11 +144,11 @@ export class AssetsManager {
                     || (x == Math.trunc(size.width / 4) && y > size.height / 2)
                     || (x == Math.trunc(size.width / 4) * 3 && y > size.height / 2)
                 )
-                ? new Color(99, 69, 44)
-                : fillColor//new Color(200, 140, 90)
+                    ? new Color(99, 69, 44)
+                    : fillColor//new Color(200, 140, 90)
 
                 color = (
-                    debugBorders 
+                    debugBorders
                     && (
                         x == 0
                         || y == 0
@@ -150,14 +156,14 @@ export class AssetsManager {
                         || y == size.height - 1
                     )
                 )
-                ? Color.BLACK
-                : color
+                    ? Color.BLACK
+                    : color
 
                 texture.data.push(color)
             }
         }
 
-        if(debugBorders) {
+        if (debugBorders) {
 
             texture.drawPixel(1, 1, Color.RED);
             texture.drawPixel(texture.size.width - 2, texture.size.height - 2, Color.GREEN);
@@ -178,12 +184,12 @@ export class AssetsManager {
 
         const texture = new Texture('wall', size);
 
-        for(let y of ArrayUtils.range(size.height)) {
+        for (let y of ArrayUtils.range(size.height)) {
 
-            for(let x of ArrayUtils.range(size.width)) {
+            for (let x of ArrayUtils.range(size.width)) {
 
                 let color = (
-                    debugBorders 
+                    debugBorders
                     && (
                         x == 0
                         || y == 0
@@ -191,14 +197,14 @@ export class AssetsManager {
                         || y == size.height - 1
                     )
                 )
-                ? Color.BLACK
-                : fillColor
+                    ? Color.BLACK
+                    : fillColor
 
                 texture.data.push(color);
             }
         }
 
-        if(debugBorders) {
+        if (debugBorders) {
 
             texture.drawPixel(1, 1, Color.RED);
             texture.drawPixel(texture.size.width - 2, texture.size.height - 2, Color.GREEN);
@@ -206,6 +212,34 @@ export class AssetsManager {
 
         AssetsManager.textures.push(texture);
         return texture;
+    }
+
+    /**
+     * Load texture file from assets.
+     * @param filename 
+     * @returns 
+     */
+    public static async loadTexture(filename: string): Promise<Texture> {
+
+        return new Promise(
+            (resolve, reject) => {
+
+                fetch(`assets/textures/${filename}`)
+                    .then(result => result.arrayBuffer())
+                    .then((buffer: ArrayBuffer) => {
+
+                        const data = new Uint8Array(buffer);
+                        const texture = TextureUtils.deserialize(data);
+                        
+                        AssetsManager.textures.push(texture);
+                        return resolve(texture);
+                    })
+                    .catch(() => {
+                        alert(`Error loading texture: ${filename}.`);
+                        reject();
+                    });
+            }
+        );
     }
 
     /**
@@ -227,10 +261,9 @@ export class AssetsManager {
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
         const map = new Map('Test Map', width, height, tileSize);
-        const floorTexture1 = AssetsManager.makeBricksTexture(new Size(64, 64), new Color(200, 140, 90), true);
-        const floorTexture2 = AssetsManager.makeBricksTexture(new Size(64, 64), new Color(90, 140, 200), true);
-        const wallTexture1 = AssetsManager.makeWallTexture(new Size(32,     32), new Color(255, 255, 100), true);
-        const wallTexture2 = AssetsManager.makeWallTexture(new Size(32, 32), new Color(255, 100, 100), true);
+        const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
+        const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
+        const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;
 
         for (let y of ArrayUtils.range(map.size.height)) {
             for (let x of ArrayUtils.range(map.size.width)) {
@@ -269,13 +302,12 @@ export class AssetsManager {
                 tile.collision = isWall;
                 tile.index = new Point(x, y);
                 tile.position = new Point(x * tileSize, y * tileSize);
-                tile.floor = floorTexture1;
+                tile.floor = floorTexture;
                 tile.wall = wallTexture1;
 
-                if(x == 1 && y == 1) tile.wall = wallTexture2;
-                
+                if (x == 1 && y == 1) tile.wall = wallTexture2;
 
-                if(x % 2 == y % 2)  tile.floor = floorTexture2;
+                if (x % 2 == y % 2) tile.floor = floorTexture!;
 
                 map.tiles[y * map.size.width + x] = tile;
             }
