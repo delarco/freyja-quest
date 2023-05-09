@@ -6,4 +6,12 @@
     top: 0;
     font-size: .7rem;
     border: 1px dashed #FFD0D0;
+    visibility: hidden;
+    opacity: 0;
+    transition: all .3s ease-in-out;
+}
+
+#debugger.active {
+    visibility: visible;
+    opacity: 1;
 }
