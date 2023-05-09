@@ -288,13 +288,52 @@ export class AssetsManager {
             (resolve, reject) => {
 
                 fetch(`assets/textures/${filename}`)
-                    .then(result => result.arrayBuffer())
-                    .then((buffer: ArrayBuffer) => {
+                    .then(async result => {
 
-                        const data = new Uint8Array(buffer);
-                        const texture = TextureUtils.deserialize(data);
+                        const fileExt = filename.split('.').pop()?.toUpperCase();
 
-                        if (debugBorders) {
+                        let texture: Texture | null = null;
+
+                        switch (fileExt) {
+
+                            case 'TEX':
+
+                                const data = new Uint8Array(await result.arrayBuffer());
+                                texture = TextureUtils.deserialize(data);
+
+                                break;
+
+                            case 'PNG':
+
+                                const bitmap = await createImageBitmap(await result.blob());
+
+                                const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+                                const context = canvas.getContext('2d')!;
+                                context.drawImage(bitmap, 0, 0);
+                                var imageData = context.getImageData(0, 0, bitmap.width, bitmap.height);
+
+                                texture = new Texture(filename, new Size(imageData.width, imageData.height));
+
+                                const colorBytes = imageData.data.length / (imageData.width * imageData.height);
+
+                                if (colorBytes != 4) {
+                                    throw new Error('Not 4-byte color');
+                                }
+
+                                for (let index = 0; index < imageData.data.length; index += 4) {
+
+                                    texture.data.push(new Color(
+                                        imageData.data[index + 0],
+                                        imageData.data[index + 1],
+                                        imageData.data[index + 2],
+                                        imageData.data[index + 3]
+                                    ));
+                                }
+
+                                break;
+                        }
+
+                        if (texture && debugBorders) {
 
                             for (let x of ArrayUtils.range(texture.size.width)) {
 
@@ -312,8 +351,13 @@ export class AssetsManager {
                             texture.drawPixel(texture.size.width - 2, texture.size.height - 2, Color.GREEN);
                         }
 
-                        AssetsManager.textures.push(texture);
-                        return resolve(texture);
+
+                        if (texture) {
+                            AssetsManager.textures.push(texture);
+                            return resolve(texture);
+                        }
+
+                        throw new Error();
                     })
                     .catch(() => {
                         alert(`Error loading texture: ${filename}.`);
@@ -343,9 +387,8 @@ export class AssetsManager {
 
         const spawnLocations = [new SpawnLocation(112, 67, 2.7)];
         const tiles = new Array<Tile>();
-        const skybox = AssetsManager.getTexture('skybox-night') || Texture.EMPTY;
 
-        const map = new Map('Test Map', width, height, tileSize, tiles, spawnLocations, skybox);
+        const map = new Map('Test Map', width, height, tileSize, tiles, spawnLocations, 'skybox-night');
         const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
         const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
         const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;
@@ -432,7 +475,7 @@ export class AssetsManager {
         const textureList = new Set([
             ...map.tiles.map(tile => tile.wall),
             ...map.tiles.map(tile => tile.floor),
-            ...map.tiles.map(tile => tile.ceiling)
+            ...map.tiles.map(tile => tile.ceiling),
         ]);
 
         for (let filename of textureList) {
@@ -453,6 +496,8 @@ export class AssetsManager {
                 .filter(f => f.ceiling == filename)
                 .forEach(tile => tile.ceilingTexture = texture);
         }
+
+        map.skyboxTexture = await AssetsManager.loadTexture(map.skybox) || Texture.EMPTY;
 
         const musicList = new Array<Audio>();
 
@@ -475,10 +520,10 @@ export class AssetsManager {
 
         let typeDir = '';
 
-        switch(type) {
+        switch (type) {
 
-            case AudioType.MUSIC: typeDir= 'musics'; break;
-            case AudioType.SOUND_EFFECT: typeDir= 'sounds'; break;
+            case AudioType.MUSIC: typeDir = 'musics'; break;
+            case AudioType.SOUND_EFFECT: typeDir = 'sounds'; break;
         }
 
         const url = `assets/${typeDir}/${filename}`;

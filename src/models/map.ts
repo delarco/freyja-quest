@@ -10,6 +10,7 @@ export class Map {
     public readonly size: Size;
     public readonly worldSize: Size;
     public musics: Array<Audio>;
+    public skyboxTexture: Texture;
     
     constructor(
         public name: string,
@@ -18,13 +19,14 @@ export class Map {
         public tileSize: number,
         public tiles: Array<Tile>,
         public spawnLocations: Array<SpawnLocation>,
-        public skyboxTexture: Texture,
+        public skybox: string,
         public musicList: Array<string> = []) {
 
         this.size = new Size(width, height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
         this.spawnLocations = spawnLocations;
         this.musics = new Array<Audio>();
+        this.skyboxTexture = Texture.EMPTY;
     }
 
     /**

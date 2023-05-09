@@ -1,8 +1,6 @@
-import { AssetsManager } from "../assets-manager";
 import { Color } from "../models/color";
 import { Map } from "../models/map";
 import { Point } from "../models/point";
-import { Texture } from "../models/texture";
 import { Tile } from "../models/tile";
 
 export class MapUtils {
@@ -29,8 +27,6 @@ export class MapUtils {
             return tile;
         });
 
-        const skyboxTexture = AssetsManager.getTexture(jsonData.skybox) || Texture.EMPTY;        
-
         const map = new Map(
             jsonData.name,
             jsonData.size.width,
@@ -38,7 +34,7 @@ export class MapUtils {
             tileSize,
             tiles,
             jsonData.spawnLocations,
-            skyboxTexture,
+            jsonData.skybox,
             jsonData.music
         );
 
