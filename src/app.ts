@@ -20,6 +20,7 @@ export class App {
         this.userInterface.initialize();
         this.userInterface.onKeyDown.on(key => this.game.keyState[key] = true);
         this.userInterface.onKeyUp.on(key => this.game.keyState[key] = false);
+        this.userInterface.onMouseMove?.on(vec => this.game.mouseMovement(vec));
 
         await this.game.initialize(
             this.userInterface.minimapCanvas,

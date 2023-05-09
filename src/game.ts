@@ -11,6 +11,7 @@ import { MathUtils } from "./utils/math-utils";
 import { World } from "./world";
 import { Canvas2DImageDataRenderer } from "./renderer/canvas-2d-image-data-renderer";
 import { AssetsManager } from "./assets-manager";
+import { Vector2 } from "./models/vector2";
 
 export class Game {
 
@@ -200,5 +201,18 @@ export class Game {
 
             this.player!.angle = MathUtils.fixAngle(this.player!.angle - this.PLAYER_ROTATION);
         }
+    }
+
+    /**
+     * Rotate player when mouse moves horizontally.
+     * @param movX 
+     * @param movY 
+     * @returns 
+     */
+    public mouseMovement(mov: Vector2) {
+
+        if(!this.player) return;
+
+        this.player.angle = MathUtils.fixAngle(this.player.angle - this.PLAYER_ROTATION * mov.x * 0.02);
     }
 }
