@@ -21,7 +21,7 @@ export class AssetsManager {
         return this._instance || (this._instance = new AssetsManager());
     }
 
-    public async initialize(tileSize: number) {
+    public async initialize(resolution: Size, tileSize: number) {
 
         AssetsManager.tileSize = tileSize;
 
@@ -33,6 +33,10 @@ export class AssetsManager {
         await AssetsManager.loadTexture('rocks.tex');
         await AssetsManager.loadTexture('rocks-sand.tex');
 
+        // generate skyboxes
+        AssetsManager.makeSkyBoxDayTexture(resolution.height / 2);
+        AssetsManager.makeSkyBoxNightTexture(resolution.height / 2);
+
         // load test map
         await AssetsManager.loadMap('test.json');
     }
@@ -43,7 +47,7 @@ export class AssetsManager {
      */
     public static getTexture(name: string): Texture | null {
 
-        return this.textures.find(texture => texture.name == name) || null;
+        return AssetsManager.textures.find(texture => texture.name == name) || null;
     }
 
     /**
@@ -86,14 +90,14 @@ export class AssetsManager {
     }
 
     /**
-     * Generates and returns a gradient skybox.
+     * Generates and returns a night gradient skybox.
      * @param height 
      * @param debugBorders 
-     * @returns bricks
+     * @returns 
      */
-    public static makeSkyBoxTexture(height: number, debugBorders: boolean = false): Texture {
+    public static makeSkyBoxNightTexture(height: number, debugBorders: boolean = false): Texture {
 
-        const texture = new Texture('skybox', new Size(360, height));
+        const texture = new Texture('skybox-night', new Size(360, height));
 
         for (let y of ArrayUtils.range(texture.size.height)) {
             for (let x of ArrayUtils.range(texture.size.width)) {
@@ -110,6 +114,50 @@ export class AssetsManager {
                         y * 255 / texture.size.height
                     );
 
+
+                if (
+                    debugBorders && (
+                        x == 0
+                        || y == 0
+                        || x == texture.size.width - 1
+                        || y == texture.size.height - 1
+                    )
+                ) color = Color.RED;
+
+                texture.drawPixel(x, y, color);
+            }
+        }
+
+        if (debugBorders) texture.drawPixel(1, 1, Color.ORANGE);
+
+        AssetsManager.textures.push(texture);
+        return texture;
+    }
+
+    /**
+     * Generates and returns a day gradient skybox.
+     * @param height 
+     * @param debugBorders 
+     * @returns 
+     */
+    public static makeSkyBoxDayTexture(height: number, debugBorders: boolean = false): Texture {
+
+        const texture = new Texture('skybox-day', new Size(360, height));
+
+        for (let y of ArrayUtils.range(texture.size.height)) {
+            for (let x of ArrayUtils.range(texture.size.width)) {
+
+                let color = (x < 180)
+                    ? new Color(
+                        255 - (x * 255 / texture.size.width),
+                        255 - (x * 255 / texture.size.width),
+                        (y * 255 / texture.size.height)
+                    )
+                    : new Color(
+                        255 - ((360 - x) * 255 / texture.size.width),
+                        255 - ((360 - x) * 255 / texture.size.width),
+                        (y * 255 / texture.size.height)
+                    )
 
                 if (
                     debugBorders && (
@@ -256,7 +304,7 @@ export class AssetsManager {
      */
     public static getMap(name: string): Map | null {
 
-        return this.maps.find(map => map.name == name) || null;
+        return AssetsManager.maps.find(map => map.name == name) || null;
     }
 
     /**
@@ -268,7 +316,11 @@ export class AssetsManager {
      */
     public static createTestMap(width: number, height: number, tileSize: number): Map {
 
-        const map = new Map('Test Map', width, height, tileSize, [], [new SpawnLocation(112, 67, 2.7)]);
+        const spawnLocations = [new SpawnLocation(112, 67, 2.7)];
+        const tiles = new Array<Tile>();
+        const skybox = AssetsManager.getTexture('skybox-night') || Texture.EMPTY;
+
+        const map = new Map('Test Map', width, height, tileSize, tiles, spawnLocations, skybox);
         const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
         const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
         const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;
@@ -355,10 +407,10 @@ export class AssetsManager {
         const textureList = new Set(
             map.tiles
                 .map(tile => tile.wall)
-                .filter(f => typeof(f) == "string" && f)
+                .filter(f => typeof (f) == "string" && f)
         );
-        
-        for(let filename of textureList) {
+
+        for (let filename of textureList) {
 
             const texture = await AssetsManager.loadTexture(filename as string);
 

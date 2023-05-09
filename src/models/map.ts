@@ -1,32 +1,25 @@
 import { Point } from "./point";
 import { Size } from "./size";
 import { SpawnLocation } from "./spawn-location";
+import { Texture } from "./texture";
 import { Tile } from "./tile";
 
 export class Map {
 
-    public readonly name: string;
     public readonly size: Size;
-    public readonly tiles: Array<Tile>;
     public readonly worldSize: Size;
-    public readonly tileSize: number;
-    public readonly spawnLocations: Array<SpawnLocation>;
-
+    
     constructor(
-        name: string,
-        width: number,
-        height: number,
-        tileSize:
-        number,
-        tiles: Array<Tile>,
-        spawnLocations: Array<SpawnLocation>) {
+        public name: string,
+        public width: number,
+        public height: number,
+        public tileSize: number,
+        public tiles: Array<Tile>,
+        public spawnLocations: Array<SpawnLocation>,
+        public skyboxTexture: Texture) {
 
-        this.name = name;
-        this.tileSize = tileSize;
         this.size = new Size(width, height);
-        this.tiles = new Array<Tile>(width * height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
-        this.tiles = tiles;
         this.spawnLocations = spawnLocations;
     }
 

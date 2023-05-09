@@ -1,11 +1,9 @@
-import { AssetsManager } from "./assets-manager";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Point } from "./models/point";
 import { Ray } from "./models/ray";
 import { Size } from "./models/size";
-import { Texture } from "./models/texture";
 import { RayCaster } from "./ray-caster";
 import { IRenderer } from "./renderer/renderer";
 import { ArrayUtils } from "./utils/array-utils";
@@ -13,17 +11,12 @@ import { MathUtils } from "./utils/math-utils";
 
 export class World {
 
-    private skyboxTexture: Texture;
-
     constructor(
         private renderer: IRenderer,
         private resolution: Size,
         private map: Map,
         private player: Player,
-        private rayCaster: RayCaster) {
-
-        this.skyboxTexture = AssetsManager.makeSkyBoxTexture(this.resolution.height / 2);
-    }
+        private rayCaster: RayCaster) { }
 
     public drawSkybox(ray: Ray): void {
 
@@ -34,7 +27,7 @@ export class World {
         for (let y of ArrayUtils.range(this.resolution.height / 2)) {
 
             const ty = y;
-            const color = this.skyboxTexture.getPixelColor(tx, ty);
+            const color = this.map.skyboxTexture.getPixelColor(tx, ty);
             this.renderer.drawPixel(x, y, color);
         }
     }

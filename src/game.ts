@@ -75,7 +75,7 @@ export class Game {
      */
     public async initialize(minimapCanvas: HTMLCanvasElement, worldCanvas: HTMLCanvasElement): Promise<void> {
 
-        await AssetsManager.Instance.initialize(this.TILE_SIZE);
+        await AssetsManager.Instance.initialize(this.worldResolution, this.TILE_SIZE);
 
         this.map = AssetsManager.getMap('Test Map')!;
         await AssetsManager.loadMapTextures(this.map);
