@@ -12,7 +12,7 @@ export class Tile {
     public floor: string;
     public wallTexture: Texture;
     public wall: string;
-    public ceilingTexture: Texture;
+    public ceilingTexture: Texture | null;
     public ceiling: string;
 
     constructor() {
@@ -25,7 +25,7 @@ export class Tile {
         this.floor = '';
         this.wallTexture = Texture.EMPTY;
         this.wall = '';
-        this.ceilingTexture = Texture.EMPTY;
+        this.ceilingTexture = null;
         this.ceiling = '';
     }
 }
