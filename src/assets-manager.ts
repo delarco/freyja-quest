@@ -32,6 +32,7 @@ export class AssetsManager {
         await AssetsManager.loadTexture('bricks.tex');
         await AssetsManager.loadTexture('rocks.tex');
         await AssetsManager.loadTexture('rocks-sand.tex');
+        await AssetsManager.loadTexture('bricks-sand.tex');
 
         // generate skyboxes
         AssetsManager.makeSkyBoxDayTexture(resolution.height / 2);
@@ -275,7 +276,7 @@ export class AssetsManager {
      * @param filename 
      * @returns 
      */
-    public static async loadTexture(filename: string): Promise<Texture> {
+    public static async loadTexture(filename: string, debugBorders: boolean = false): Promise<Texture> {
 
         return new Promise(
             (resolve, reject) => {
@@ -286,6 +287,24 @@ export class AssetsManager {
 
                         const data = new Uint8Array(buffer);
                         const texture = TextureUtils.deserialize(data);
+
+                        if (debugBorders) {
+
+                            for(let x of ArrayUtils.range(texture.size.width)) {
+
+                                texture.drawPixel(x, 0, Color.BLACK);
+                                texture.drawPixel(x, texture.size.height - 1, Color.BLACK);
+                            }
+
+                            for(let y of ArrayUtils.range(texture.size.height)) {
+
+                                texture.drawPixel(0, y, Color.BLACK);
+                                texture.drawPixel(texture.size.width - 1, y, Color.BLACK);
+                            }
+
+                            texture.drawPixel(1, 1, Color.RED);
+                            texture.drawPixel(texture.size.width - 2, texture.size.height - 2, Color.GREEN);
+                        }
 
                         AssetsManager.textures.push(texture);
                         return resolve(texture);
@@ -417,6 +436,14 @@ export class AssetsManager {
             map.tiles
                 .filter(f => f.wall == filename)
                 .forEach(tile => tile.wallTexture = texture);
+
+            map.tiles
+                .filter(f => f.floor == filename)
+                .forEach(tile => tile.floorTexture = texture);
+
+            map.tiles
+                .filter(f => f.ceiling == filename)
+                .forEach(tile => tile.ceilingTexture = texture);
         }
     }
 }
