@@ -303,6 +303,7 @@ export class AssetsManager {
 
                                 break;
 
+                            case 'JPG':
                             case 'PNG':
 
                                 const bitmap = await createImageBitmap(await result.blob());
