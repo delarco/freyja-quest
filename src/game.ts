@@ -195,12 +195,22 @@ export class Game {
 
         if (this.keyState['ArrowLeft']) {
 
-            this.player!.angle = MathUtils.fixAngle(this.player!.angle + this.PLAYER_ROTATION);
+            const mov = new Point(
+                -Math.cos(this.player!.angle - MathUtils.rad90) * this.PLAYER_VELOCITY,
+                Math.sin(this.player!.angle - MathUtils.rad90) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
         }
 
         if (this.keyState['ArrowRight']) {
 
-            this.player!.angle = MathUtils.fixAngle(this.player!.angle - this.PLAYER_ROTATION);
+            const mov = new Point(
+                -Math.cos(this.player!.angle + MathUtils.rad90) * this.PLAYER_VELOCITY,
+                Math.sin(this.player!.angle + MathUtils.rad90) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
         }
     }
 
