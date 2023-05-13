@@ -2,6 +2,7 @@ import { Audio, AudioType } from "./models/audio";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Point } from "./models/point";
+import { Direction } from "./models/ray";
 import { Size } from "./models/size";
 import { SpawnLocation } from "./models/spawn-location";
 import { Texture } from "./models/texture";
@@ -68,7 +69,7 @@ export class AssetsManager {
 
             for (let x of ArrayUtils.range(size.width)) {
 
-                let color = new Color(255, 255, 255);
+                let color = new Color(255, 255, 255, 0);
 
                 if (x == 0 && y != 0) color = Color.RED;
 
@@ -86,7 +87,7 @@ export class AssetsManager {
                     || (x == y)
                     || (x == 2 && y == 1)
                     || (x == 1 && y == 2)
-                ) color = Color.BLACK;
+                ) color = Color.RED;
 
                 texture.data.push(color);
             }
@@ -432,9 +433,10 @@ export class AssetsManager {
                 tile.index = new Point(x, y);
                 tile.position = new Point(x * tileSize, y * tileSize);
                 tile.floorTexture = floorTexture;
-                tile.wallTexture = wallTexture1;
-
-                if (x == 1 && y == 1) tile.wallTexture = wallTexture2;
+                tile.wallTexture[Direction.NORTH] = wallTexture1;
+                tile.wallTexture[Direction.SOUTH] = wallTexture2;
+                tile.wallTexture[Direction.EAST] = wallTexture1;
+                tile.wallTexture[Direction.WEST] = wallTexture2;
 
                 if (x % 2 == y % 2) tile.floorTexture = floorTexture!;
 
@@ -474,7 +476,10 @@ export class AssetsManager {
     public static async loadMapAssets(map: Map): Promise<void> {
 
         const textureList = new Set([
-            ...map.tiles.map(tile => tile.wall),
+            ...map.tiles.map(tile => tile.wall[Direction.NORTH]),
+            ...map.tiles.map(tile => tile.wall[Direction.SOUTH]),
+            ...map.tiles.map(tile => tile.wall[Direction.EAST]),
+            ...map.tiles.map(tile => tile.wall[Direction.WEST]),
             ...map.tiles.map(tile => tile.floor),
             ...map.tiles.map(tile => tile.ceiling),
         ]);
@@ -486,8 +491,20 @@ export class AssetsManager {
             const texture = await AssetsManager.loadTexture(filename as string);
 
             map.tiles
-                .filter(f => f.wall == filename)
-                .forEach(tile => tile.wallTexture = texture);
+                .filter(f => f.wall[Direction.NORTH] == filename)
+                .forEach(tile => tile.wallTexture[Direction.NORTH] = texture);
+
+            map.tiles
+                .filter(f => f.wall[Direction.SOUTH] == filename)
+                .forEach(tile => tile.wallTexture[Direction.SOUTH] = texture);
+                
+            map.tiles
+                .filter(f => f.wall[Direction.EAST] == filename)
+                .forEach(tile => tile.wallTexture[Direction.EAST] = texture);
+
+            map.tiles
+                .filter(f => f.wall[Direction.WEST] == filename)
+                .forEach(tile => tile.wallTexture[Direction.WEST] = texture);
 
             map.tiles
                 .filter(f => f.floor == filename)

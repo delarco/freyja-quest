@@ -2,6 +2,14 @@ import { MathUtils } from "../utils/math-utils";
 import { Point } from "./point";
 import { Tile } from "./tile";
 
+export enum Direction {
+    NONE = 0,
+    NORTH = 1,
+    SOUTH = 2,
+    EAST = 3,
+    WEST = 4,
+}
+
 export class Ray {
 
     public readonly index;
@@ -9,9 +17,10 @@ export class Ray {
     public destination: Point;
     public size: number;
     public collidedTile: Tile | null;
-    public hitVerticalFirst: boolean;
     private _angle: number;
     private _angleFishEyeFix: number;
+
+    public collisionDirection: Direction;
 
     public get angle() { return this._angle; }
     public set angle(a: number) { this._angle = MathUtils.fixAngle(a); }
@@ -29,8 +38,8 @@ export class Ray {
         this.destination = new Point();
         this.size = 0;
         this.collidedTile = null;
-        this.hitVerticalFirst = false;
         this._angle = 0;
         this._angleFishEyeFix = 0;
+        this.collisionDirection = Direction.NONE;
     }
 }

@@ -56,6 +56,8 @@ export class Canvas2DImageDataRenderer implements IRenderer {
 
     drawPixel(x: number, y: number, color: Color): void {
 
+        if(color.a == 0) return;
+
         var index = 4 * (y * this.resolution.width + x);
 
         this.buffer![index + 0] = color.r;

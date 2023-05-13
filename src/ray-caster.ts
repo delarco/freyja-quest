@@ -1,6 +1,6 @@
 import { Map } from "./models/map";
 import { Point } from "./models/point";
-import { Ray } from "./models/ray";
+import { Direction, Ray } from "./models/ray";
 import { Tile } from "./models/tile";
 import { ArrayUtils } from "./utils/array-utils";
 import { MathUtils } from "./utils/math-utils";
@@ -46,12 +46,24 @@ export class RayCaster {
             if (horizontalDistance < verticalDistance) {
                 ray.destination = horizontalPoint!;
                 ray.size = horizontalDistance;
-                ray.hitVerticalFirst = false;
+
+                if(ray.angle > 0 && ray.angle < MathUtils.rad180) {
+                    ray.collisionDirection = Direction.SOUTH
+                }
+                else {
+                    ray.collisionDirection = Direction.NORTH;
+                }
             }
             else if (verticalDistance < horizontalDistance) {
                 ray.destination = verticalPoint!;
                 ray.size = verticalDistance;
-                ray.hitVerticalFirst = true;
+
+                if(ray.angle < MathUtils.rad90 || ray.angle > MathUtils.rad270) {
+                    ray.collisionDirection = Direction.WEST
+                }
+                else {
+                    ray.collisionDirection = Direction.EAST;
+                }
             }
 
             ray.collidedTile = this.map.getTileFromPosition(ray.destination);

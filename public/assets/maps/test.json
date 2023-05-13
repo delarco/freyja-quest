@@ -530,8 +530,13 @@
         },
         {
             "minimapColor": [196, 196, 196],
-            "collision": false,
-            "wall": "rocks.tex",
+            "collision": true,
+            "wall": {
+                "north": "north.png",
+                "south": "south.png",
+                "east": "east.png",
+                "west": "west.png"
+            },
             "index": {
                 "x": 5,
                 "y": 5

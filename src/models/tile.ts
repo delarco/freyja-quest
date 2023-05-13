@@ -10,8 +10,8 @@ export class Tile {
     public position: Point;
     public floorTexture: Texture;
     public floor: string;
-    public wallTexture: Texture;
-    public wall: string;
+    public wallTexture: { [key: number]: Texture };
+    public wall: { [key: number]: string };
     public ceilingTexture: Texture | null;
     public ceiling: string;
 
@@ -23,8 +23,8 @@ export class Tile {
         this.position = new Point();
         this.floorTexture = Texture.EMPTY;
         this.floor = '';
-        this.wallTexture = Texture.EMPTY;
-        this.wall = '';
+        this.wallTexture = {};
+        this.wall = {};
         this.ceilingTexture = null;
         this.ceiling = '';
     }

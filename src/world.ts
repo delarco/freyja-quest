@@ -1,7 +1,7 @@
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
-import { Ray } from "./models/ray";
+import { Direction, Ray } from "./models/ray";
 import { Size } from "./models/size";
 import { RayCaster } from "./ray-caster";
 import { IRenderer } from "./renderer/renderer";
@@ -102,7 +102,7 @@ export class World {
 
             if (!ray.collidedTile) continue;
 
-            const texture = ray.collidedTile.wallTexture;
+            let texture = ray.collidedTile.wallTexture[ray.collisionDirection];
             const ca = MathUtils.fixAngle(this.player.angle - ray.angle);
             const distance = ray.size * Math.cos(ca);
 
@@ -122,7 +122,9 @@ export class World {
             let textureY = textureOffsetY * textureStepY;
             let textureX = 0;
 
-            if (!ray.hitVerticalFirst) {
+            const hitVerticalFirst = ray.collisionDirection == Direction.EAST || ray.collisionDirection == Direction.WEST;
+
+            if (!hitVerticalFirst) {
 
                 const tileSizeOverTexWidth = this.map.tileSize / texture.size.width;
 
@@ -130,7 +132,7 @@ export class World {
                 if (ray.angle > MathUtils.rad180) textureX = texture.size.width - textureX;
             }
 
-            if (ray.hitVerticalFirst) {
+            if (hitVerticalFirst) {
 
                 const tileOverTexWidth = this.map.tileSize / texture.size.width;
 
@@ -146,7 +148,7 @@ export class World {
                 if (roundTextureY > texture.size.height - 1) roundTextureY = texture.size.height - 1;
 
                 let color = texture.getPixelColor(roundTextureX, roundTextureY) || Color.WHITE;
-                if (!ray.hitVerticalFirst) color = Color.shade(color, 0.6);
+                if (!hitVerticalFirst) color = Color.shade(color, 0.6);
 
                 const shade = 0.2 + 0.8 * (1 - distance / halfVerticalRes);
                 color = Color.shade(color, shade);
