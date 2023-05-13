@@ -22,10 +22,11 @@ export class World {
         // TODO: draw only before wall
         const x = ray.index;
         const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
-
+        const yScale = this.map.skyboxTexture.size.height / (this.resolution.height / 2);
+        
         for (let y of ArrayUtils.range(this.resolution.height / 2)) {
 
-            const ty = y;
+            const ty = Math.floor(y * yScale);
             const color = this.map.skyboxTexture.getPixelColor(tx, ty);
             this.renderer.drawPixel(x, y, color);
         }
