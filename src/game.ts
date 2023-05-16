@@ -4,7 +4,7 @@ import { Canvas2DRenderer } from "./renderer/canvas-2d-renderer";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 import { Point } from "./models/point";
-import { Clock } from "./clock";
+import { Clock } from "./utils/clock";
 import { RayCaster } from "./ray-caster";
 import { Debugger } from "./debugger";
 import { MathUtils } from "./utils/math-utils";

@@ -1,4 +1,4 @@
-import { Clock } from "./clock";
+import { Clock } from "./utils/clock";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
 
