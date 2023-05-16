@@ -1,11 +1,13 @@
+import { Point } from "./models/point";
 import { Vector2 } from "./models/vector2";
 import { TypedEvent } from "./typed-event";
+import { ClickEvent } from "./utils/click-event";
 
 export class MouseInput {
 
     private havePointerLock: boolean = false;
     private locked: boolean = false;
-    public onClick = new TypedEvent<number>();
+    public onClick = new TypedEvent<ClickEvent>();
     public onMove = new TypedEvent<Vector2>();
 
     private clickCallback = (ev: MouseEvent) => this.clickEvent(ev)
@@ -30,7 +32,9 @@ export class MouseInput {
 
     private clickEvent(ev: MouseEvent): void {
 
-        this.onClick.emit(ev.button);
+        const rect = (this.element as HTMLCanvasElement).getBoundingClientRect();
+        const point = new Point(ev.clientX - rect.left, ev.clientY - rect.top);
+        this.onClick.emit(new ClickEvent(point, ev.button));
 
         if (this.locked) return;
 
