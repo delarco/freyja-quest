@@ -5,6 +5,7 @@ import { Size } from "../models/size";
 import { Texture } from "../models/texture";
 import { Vector2 } from "../models/vector2";
 import { IRenderer } from "../renderer/renderer";
+import { TypedEvent } from "../typed-event";
 import { Scene } from "./Scene";
 
 export class TitleScreenScene implements Scene {
@@ -15,6 +16,8 @@ export class TitleScreenScene implements Scene {
     private music: Audio | null = null;
     private colorCounter: number = 0;
     private colorCounterInc: number = 10;
+
+    public onEnd = new TypedEvent<boolean>();
 
     constructor(public renderer: IRenderer, private resolution: Size) { }
 
@@ -39,7 +42,6 @@ export class TitleScreenScene implements Scene {
         this.clickHere?.data.forEach(color => {
 
             color.r = this.colorCounter;
-            //color.g = this.colorCounter;
             color.b = this.colorCounter;
         });
 
@@ -55,6 +57,8 @@ export class TitleScreenScene implements Scene {
 
     public mouseClick(point: Point, button: number): void {
 
+        this.music?.pause();
+        this.onEnd.emit(true);
     }
 
     public draw(): void {

@@ -10,6 +10,7 @@ import { Texture } from "../models/texture";
 import { Vector2 } from "../models/vector2";
 import { RayCaster } from "../ray-caster";
 import { IRenderer } from "../renderer/renderer";
+import { TypedEvent } from "../typed-event";
 import { ArrayUtils } from "../utils/array-utils";
 import { MathUtils } from "../utils/math-utils";
 import { Scene } from "./Scene";
@@ -24,6 +25,8 @@ export class MapScene implements Scene {
 
     private readonly PLAYER_VELOCITY = 4;
     private readonly PLAYER_ROTATION = 0.15;
+
+    public onEnd = new TypedEvent<boolean>();
 
     constructor(
         public renderer: IRenderer,
@@ -71,7 +74,7 @@ export class MapScene implements Scene {
     }
 
     /**
-     * Mouse movement player update.
+     * Rotate player when mouse moves horizontally.
      * @param mov 
      */
     public mouseMovement(mov: Vector2): void {
