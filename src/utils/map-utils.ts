@@ -69,7 +69,6 @@ export class MapUtils {
             jsonData.skybox,
             jsonData.music
         );
-console.log(map);
 
         return map;
     }
