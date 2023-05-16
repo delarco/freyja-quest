@@ -39,6 +39,10 @@ export class Canvas2DRenderer implements IRenderer {
         this.context.closePath();
     }
 
+    drawHorizontalLine(x1: number, x2: number, y: number, color: Color): void {
+        throw new Error("Method not implemented.");
+    }
+
     drawRect(x: number, y: number, w: number, h: number, color: Color): void {
 
         if (!this.context) return;

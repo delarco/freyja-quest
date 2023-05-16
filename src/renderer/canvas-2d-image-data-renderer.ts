@@ -39,6 +39,14 @@ export class Canvas2DImageDataRenderer implements IRenderer {
         throw new Error("Method not implemented.");
     }
 
+    drawHorizontalLine(x1: number, x2: number, y: number, color: Color): void {
+
+        for(let x = x1; x <= x2; x++) {
+
+            this.drawPixel(x, y, color);
+        }
+    }
+
     drawRect(x: number, y: number, w: number, h: number, color: Color): void {
 
         for (let py = y; py < y + h; py++) {
