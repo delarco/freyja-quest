@@ -1,6 +1,7 @@
 import { Vector2 } from "./models/vector2";
 import { MouseInput } from "./mouse-input";
 import { TypedEvent } from "./typed-event";
+import { ClickEvent } from "./utils/click-event";
 
 export class GUI {
 
@@ -13,6 +14,7 @@ export class GUI {
     public onKeyDown = new TypedEvent<string>();
     public onKeyUp = new TypedEvent<string>();
     public onMouseMove: TypedEvent<Vector2> | null = null;
+    public onMouseClick: TypedEvent<ClickEvent> | null = null;
     public onDebuggerToggle = new TypedEvent<boolean>();
 
     private debuggerActive: boolean = false;
@@ -66,6 +68,7 @@ export class GUI {
         this.debuggerButton?.addEventListener('click', () => this.onDebuggerButtonClick());
 
         this.onMouseMove = this.mouseInput!.onMove;
+        this.onMouseClick = this.mouseInput!.onClick;
     }
 
     /**
