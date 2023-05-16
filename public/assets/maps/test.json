@@ -534,8 +534,11 @@
             "wall": {
                 "north": "north.png",
                 "south": "south.png",
-                "east": "east.png",
-                "west": "west.png"
+                "east": "east.png"
+            },
+            "wall-detail": {
+                "north": "muck.png",
+                "east": "banner.png"
             },
             "index": {
                 "x": 5,
