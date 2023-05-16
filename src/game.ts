@@ -7,6 +7,7 @@ import { Vector2 } from "./models/vector2";
 import { Scene } from "./scenes/Scene";
 import { IRenderer } from "./renderer/renderer";
 import { MapScene } from "./scenes/MapScene";
+import { TitleScreenScene } from "./scenes/TitleScreenScene";
 
 export class Game {
 
@@ -59,7 +60,8 @@ export class Game {
         this.renderer = new Canvas2DImageDataRenderer(worldCanvas, this.resolution, this.screenSize);
         await AssetsManager.Instance.initialize(this.resolution, this.TILE_SIZE);
 
-        this.scene = new MapScene(this.renderer, this.resolution, this.keyState);
+        //this.scene = new MapScene(this.renderer, this.resolution, this.keyState);
+        this.scene = new TitleScreenScene(this.renderer, this.resolution);
         await this.scene.initialize();
 
         Debugger.clock = this.clock;
