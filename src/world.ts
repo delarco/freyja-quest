@@ -22,14 +22,14 @@ export class World {
         private halfVerticalRes: number = resolution.height / 2
     ) { }
 
-    public drawSkybox(ray: Ray): void {
+    public drawSkybox(ray: Ray, wallStartY: number): void {
 
-        // TODO: draw only before wall
         const x = ray.index;
         const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
         const yScale = this.map.skyboxTexture.size.height / (this.resolution.height / 2);
+        const lastY = Math.min(wallStartY, this.halfVerticalRes);
 
-        for (let y of ArrayUtils.range(this.resolution.height / 2)) {
+        for (let y of ArrayUtils.range(lastY)) {
 
             const ty = Math.floor(y * yScale);
             const color = this.map.skyboxTexture.getPixelColor(tx, ty);
@@ -102,7 +102,7 @@ export class World {
 
             const ray = this.rayCaster.rays[index];
 
-            this.drawSkybox(ray);
+            
             this.drawFloorCeiling(ray);
 
             if (!ray.collidedTile) continue;
@@ -125,6 +125,8 @@ export class World {
 
             const x = index * lineWidth;
             const lineOffsetY = Math.floor(this.halfVerticalRes - lineDrawHeight / 2);
+
+            this.drawSkybox(ray, lineOffsetY);
 
             const hitVerticalFirst = ray.collisionDirection == Direction.EAST || ray.collisionDirection == Direction.WEST;
 
