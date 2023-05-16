@@ -22,6 +22,7 @@ export class App {
         this.userInterface.onKeyDown.on(key => this.game.keyState[key] = true);
         this.userInterface.onKeyUp.on(key => this.game.keyState[key] = false);
         this.userInterface.onMouseMove?.on(vec => this.game.mouseMovement(vec));
+        this.userInterface.onMouseClick?.on(ev => this.game.mouseClick(ev));
         this.userInterface.onDebuggerToggle.on(active => Debugger.toggle(active));
 
         this.userInterface.setDebuggerState(true);

@@ -8,6 +8,7 @@ import { Scene } from "./scenes/Scene";
 import { IRenderer } from "./renderer/renderer";
 import { MapScene } from "./scenes/MapScene";
 import { TitleScreenScene } from "./scenes/TitleScreenScene";
+import { ClickEvent } from "./utils/click-event";
 
 export class Game {
 
@@ -60,11 +61,20 @@ export class Game {
         this.renderer = new Canvas2DImageDataRenderer(worldCanvas, this.resolution, this.screenSize);
         await AssetsManager.Instance.initialize(this.resolution, this.TILE_SIZE);
 
-        //this.scene = new MapScene(this.renderer, this.resolution, this.keyState);
         this.scene = new TitleScreenScene(this.renderer, this.resolution);
         await this.scene.initialize();
 
+        this.scene.onEnd.on(flag => this.onTitleScreenEnd(flag));
+
         Debugger.clock = this.clock;
+    }
+
+    private async onTitleScreenEnd(flag: boolean): Promise<void> {
+
+        const mapScene = new MapScene(this.renderer!, this.resolution, this.keyState);
+        await mapScene.initialize();
+
+        this.scene = mapScene;
     }
 
     /**
@@ -114,7 +124,7 @@ export class Game {
     }
 
     /**
-     * Rotate player when mouse moves horizontally.
+     * Mouse movement event.
      * @param movX 
      * @param movY 
      * @returns 
@@ -122,5 +132,14 @@ export class Game {
     public mouseMovement(mov: Vector2) {
 
         this.scene?.mouseMovement(mov);
+    }
+
+    /**
+     * Mouse click event.
+     * @param ev 
+     */
+    public mouseClick(ev: ClickEvent) {
+
+        this.scene?.mouseClick(ev.point, ev.button);
     }
 }
