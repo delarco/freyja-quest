@@ -78,7 +78,14 @@ export class Game {
 
         await AssetsManager.Instance.initialize(this.worldResolution, this.TILE_SIZE);
 
-        this.map = AssetsManager.getMap('Test Map')!;
+        const mapLoad = await AssetsManager.loadMap('test.json');
+
+        if (mapLoad instanceof Error) {
+            alert('Error loading map');
+            return;
+        }
+
+        this.map = mapLoad;
         await AssetsManager.loadMapAssets(this.map);
 
         const spawnLoc = this.map.getRandomSpawnLocation();
@@ -232,11 +239,11 @@ export class Game {
         const music = this.map?.musics[0];
 
         if (music) {
-            
+
             music.onPlayEnded.on(() => {
                 // TODO: play next music
             });
-            
+
             music.loop = true;
             music.volume = 0.3;
             music.play();
