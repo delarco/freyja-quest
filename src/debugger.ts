@@ -25,14 +25,17 @@ export class Debugger {
 
         this.fpsInfo.innerText = this._clock?.fps.toString();
 
-        const playerTile = this._map.getTileFromPosition(this._player.position);
+        if (this._map && this.player) {
 
-        this.playerInfo.innerText = `
-        x: ${this._player.position.x.toFixed(2)} 
-        y: ${this._player.position.y.toFixed(2)} 
-        a: ${this._player.angle.toFixed(2)} cos: ${Math.cos(this._player.angle).toFixed(3)} sin: ${Math.sin(this._player.angle).toFixed(3)}
-        tile: ${playerTile?.index.x} ${playerTile?.index.y}
+            const playerTile = this._map.getTileFromPosition(this._player.position);
+
+            this.playerInfo.innerText = `
+            x: ${this._player.position.x.toFixed(2)} 
+            y: ${this._player.position.y.toFixed(2)} 
+            a: ${this._player.angle.toFixed(2)} cos: ${Math.cos(this._player.angle).toFixed(3)} sin: ${Math.sin(this._player.angle).toFixed(3)}
+            tile: ${playerTile?.index.x} ${playerTile?.index.y}
         `;
+        }
     }
 
     public static toggle(active: boolean): void {
