@@ -4,28 +4,16 @@ import { Texture } from "./texture";
 
 export class Tile {
 
-    public minimapColor: Color;
-    public collision: boolean;
-    public index: Point;
-    public position: Point;
-    public floorTexture: Texture;
-    public floor: string;
-    public wallTexture: { [key: number]: Texture };
-    public wall: { [key: number]: string };
-    public ceilingTexture: Texture | null;
-    public ceiling: string;
-
-    constructor() {
-        
-        this.minimapColor = Color.RED;
-        this.collision = true;
-        this.index = new Point();
-        this.position = new Point();
-        this.floorTexture = Texture.EMPTY;
-        this.floor = '';
-        this.wallTexture = {};
-        this.wall = {};
-        this.ceilingTexture = null;
-        this.ceiling = '';
-    }
+    constructor(
+        public minimapColor: Color = Color.RED,
+        public collision: boolean = true,
+        public index: Point = new Point(),
+        public position: Point = new Point(),
+        public floorTexture: Texture = Texture.EMPTY,
+        public floor: string = '',
+        public wallTexture: { [key: number]: Texture } = {},
+        public wall: { [key: number]: string } = {},
+        public ceilingTexture: Texture | null = null,
+        public ceiling: string = '',
+    ) { }
 }
