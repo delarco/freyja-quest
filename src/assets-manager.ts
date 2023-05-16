@@ -1,12 +1,9 @@
 import { Audio, AudioType } from "./models/audio";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
-import { Point } from "./models/point";
 import { Direction } from "./models/ray";
 import { Size } from "./models/size";
-import { SpawnLocation } from "./models/spawn-location";
 import { Texture } from "./models/texture";
-import { Tile } from "./models/tile";
 import { ArrayUtils } from "./utils/array-utils";
 import { MapUtils } from "./utils/map-utils";
 import { TextureUtils } from "./utils/texture-utils";
@@ -19,7 +16,6 @@ export class AssetsManager {
     public static readonly textures: Array<Texture> = [];
     public static readonly maps: Array<Map> = [];
     public static readonly audios: Array<Audio> = [];
-    public static DEBUG_TEXTURE: Texture;
 
     public static get Instance() {
 
@@ -29,15 +25,6 @@ export class AssetsManager {
     public async initialize(resolution: Size, tileSize: number) {
 
         AssetsManager.tileSize = tileSize;
-
-        // load test map
-        await AssetsManager.loadMap('test.json');
-
-        // load music
-        AssetsManager.loadAudio('medieval-chateau.mp3', AudioType.MUSIC);
-        AssetsManager.loadAudio('test.wav', AudioType.SOUND_EFFECT);
-
-        AssetsManager.DEBUG_TEXTURE = await AssetsManager.loadTexture('debug.png');
     }
 
     /**
@@ -148,75 +135,6 @@ export class AssetsManager {
     public static getMap(name: string): Map | null {
 
         return AssetsManager.maps.find(map => map.name == name) || null;
-    }
-
-    /**
-     * Create a test map surrounded by walls.
-     * @param width 
-     * @param height 
-     * @param tileSize 
-     * @returns 
-     */
-    public static createTestMap(width: number, height: number, tileSize: number): Map {
-
-        const spawnLocations = [new SpawnLocation(112, 67, 2.7)];
-        const tiles = new Array<Tile>();
-
-        const map = new Map('Test Map', width, height, tileSize, tiles, spawnLocations, 'skybox-night');
-        const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
-        const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
-        const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;
-
-        for (let y of ArrayUtils.range(map.size.height)) {
-            for (let x of ArrayUtils.range(map.size.width)) {
-
-                const tile = new Tile();
-
-                const isWall = (
-                    x == 0
-                    || y == 0
-                    || (x == map.size.width - 1 && y < 4)
-                    || (x == map.size.width - 1 && y > 6)
-                    || (y == map.size.height - 1)
-                    || (x == 1 && y == 1)
-                    || (x == 4 && y > 3 && y < 15)
-                    || (x == 16 && y > 8 && y < 15)
-                    || (x > 5 && x < 15 && y == 12)
-                    || (x >= 16 && x <= 17 && y >= 2 && y <= 3)
-                    || (x >= 10 && x <= 11 && y >= 5 && y <= 6)
-                )
-
-                tile.minimapColor = isWall
-                    ? new Color(170, 170, 170)
-                    : new Color(240, 240, 240);
-
-                if (
-                    (x >= 16 && x <= 17 && y >= 2 && y <= 3)
-                    || (x >= 10 && x <= 11 && y >= 5 && y <= 6)
-                ) tile.minimapColor = new Color(221, 170, 170);
-
-                if (x > 5 && x < 15 && y == 12) tile.minimapColor = new Color(170, 221, 170);
-
-                if (x == 4 && y > 3 && y < 15) tile.minimapColor = new Color(170, 170, 221);
-
-                if (x == 16 && y > 8 && y < 15) tile.minimapColor = new Color(221, 221, 170);
-
-                tile.collision = isWall;
-                tile.index = new Point(x, y);
-                tile.position = new Point(x * tileSize, y * tileSize);
-                tile.floorTexture = floorTexture;
-                tile.wallTexture[Direction.NORTH] = wallTexture1;
-                tile.wallTexture[Direction.SOUTH] = wallTexture2;
-                tile.wallTexture[Direction.EAST] = wallTexture1;
-                tile.wallTexture[Direction.WEST] = wallTexture2;
-
-                if (x % 2 == y % 2) tile.floorTexture = floorTexture!;
-
-                map.tiles[y * map.size.width + x] = tile;
-            }
-        }
-
-        return map;
     }
 
     /**
