@@ -15,5 +15,7 @@ export class Tile {
         public wall: { [key: number]: string } = {},
         public ceilingTexture: Texture | null = null,
         public ceiling: string = '',
+        public wallDetailsTexture: { [key: number]: Texture } = {},
+        public wallDetails: { [key: number]: string } = {}
     ) { }
 }

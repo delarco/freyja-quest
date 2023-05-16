@@ -39,7 +39,22 @@ export class MapUtils {
                 tile.wall[Direction.EAST] = raw.wall.east;
                 tile.wall[Direction.WEST] = raw.wall.west;
             }
-                
+               
+            if(!raw['wall-detail']) {
+                tile.wallDetails = {};
+            }
+            else if(typeof(raw['wall-detail']) == "string") {
+                tile.wallDetails[Direction.NORTH] = raw['wall-detail'];
+                tile.wallDetails[Direction.SOUTH] = raw['wall-detail'];
+                tile.wallDetails[Direction.EAST] = raw['wall-detail'];
+                tile.wallDetails[Direction.WEST] = raw['wall-detail'];
+            }
+            else {
+                tile.wallDetails[Direction.NORTH] = raw['wall-detail'].north;
+                tile.wallDetails[Direction.SOUTH] = raw['wall-detail'].south;
+                tile.wallDetails[Direction.EAST] = raw['wall-detail'].east;
+                tile.wallDetails[Direction.WEST] = raw['wall-detail'].west;
+            }
 
             return tile;
         });
@@ -54,6 +69,7 @@ export class MapUtils {
             jsonData.skybox,
             jsonData.music
         );
+console.log(map);
 
         return map;
     }

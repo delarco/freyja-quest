@@ -11,6 +11,7 @@ import { ArrayUtils } from "./utils/array-utils";
 import { MapUtils } from "./utils/map-utils";
 import { TextureUtils } from "./utils/texture-utils";
 
+// TODO: split assets manager class
 export class AssetsManager {
 
     private static _instance: AssetsManager;
@@ -18,6 +19,7 @@ export class AssetsManager {
     public static readonly textures: Array<Texture> = [];
     public static readonly maps: Array<Map> = [];
     public static readonly audios: Array<Audio> = [];
+    public static DEBUG_TEXTURE: Texture;
 
     public static get Instance() {
 
@@ -47,6 +49,8 @@ export class AssetsManager {
         // load music
         AssetsManager.loadAudio('medieval-chateau.mp3', AudioType.MUSIC);
         AssetsManager.loadAudio('test.wav', AudioType.SOUND_EFFECT);
+
+        AssetsManager.DEBUG_TEXTURE = await AssetsManager.loadTexture('debug.png');
     }
 
     /**
@@ -311,6 +315,7 @@ export class AssetsManager {
 
                                 const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
                                 const context = canvas.getContext('2d')!;
+                                // TODO: fix error Property 'drawImage' does not exist on type 'OffscreenRenderingContext'.
                                 context.drawImage(bitmap, 0, 0);
                                 var imageData = context.getImageData(0, 0, bitmap.width, bitmap.height);
 
@@ -480,6 +485,10 @@ export class AssetsManager {
             ...map.tiles.map(tile => tile.wall[Direction.SOUTH]),
             ...map.tiles.map(tile => tile.wall[Direction.EAST]),
             ...map.tiles.map(tile => tile.wall[Direction.WEST]),
+            ...map.tiles.map(tile => tile.wallDetails[Direction.NORTH]),
+            ...map.tiles.map(tile => tile.wallDetails[Direction.SOUTH]),
+            ...map.tiles.map(tile => tile.wallDetails[Direction.EAST]),
+            ...map.tiles.map(tile => tile.wallDetails[Direction.WEST]),
             ...map.tiles.map(tile => tile.floor),
             ...map.tiles.map(tile => tile.ceiling),
         ]);
@@ -505,6 +514,22 @@ export class AssetsManager {
             map.tiles
                 .filter(f => f.wall[Direction.WEST] == filename)
                 .forEach(tile => tile.wallTexture[Direction.WEST] = texture);
+
+            map.tiles
+                .filter(f => f.wallDetails[Direction.NORTH] == filename)
+                .forEach(tile => tile.wallDetailsTexture[Direction.NORTH] = texture);
+
+            map.tiles
+                .filter(f => f.wallDetails[Direction.SOUTH] == filename)
+                .forEach(tile => tile.wallDetailsTexture[Direction.SOUTH] = texture);
+                
+            map.tiles
+                .filter(f => f.wallDetails[Direction.EAST] == filename)
+                .forEach(tile => tile.wallDetailsTexture[Direction.EAST] = texture);
+
+            map.tiles
+                .filter(f => f.wallDetails[Direction.WEST] == filename)
+                .forEach(tile => tile.wallDetailsTexture[Direction.WEST] = texture);
 
             map.tiles
                 .filter(f => f.floor == filename)
