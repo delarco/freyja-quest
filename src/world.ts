@@ -1,4 +1,3 @@
-import { AssetsManager } from "./assets-manager";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Player } from "./models/player";
@@ -101,7 +100,7 @@ export class World {
 
             if (!ray.collidedTile) continue;
 
-            const texture = ray.collidedTile.wallTexture[ray.collisionDirection] || AssetsManager.DEBUG_TEXTURE;
+            const texture = ray.collidedTile.wallTexture[ray.collisionDirection] || Texture.EMPTY;
             const textureDetail = ray.collidedTile.wallDetailsTexture[ray.collisionDirection];
             const ca = MathUtils.fixAngle(this.player.angle - ray.angle);
             const distance = ray.size * Math.cos(ca);
