@@ -1,27 +1,161 @@
-import { Color } from "./models/color";
-import { Map } from "./models/map";
-import { Player } from "./models/player";
-import { Point } from "./models/point";
-import { Direction, Ray } from "./models/ray";
-import { Size } from "./models/size";
-import { Texture } from "./models/texture";
-import { RayCaster } from "./ray-caster";
-import { IRenderer } from "./renderer/renderer";
-import { ArrayUtils } from "./utils/array-utils";
-import { MathUtils } from "./utils/math-utils";
+import { AssetsManager } from "../assets-manager";
+import { Debugger } from "../debugger";
+import { Color } from "../models/color";
+import { Map } from "../models/map";
+import { Player } from "../models/player";
+import { Point } from "../models/point";
+import { Direction, Ray } from "../models/ray";
+import { Size } from "../models/size";
+import { Texture } from "../models/texture";
+import { Vector2 } from "../models/vector2";
+import { RayCaster } from "../ray-caster";
+import { IRenderer } from "../renderer/renderer";
+import { ArrayUtils } from "../utils/array-utils";
+import { MathUtils } from "../utils/math-utils";
+import { Scene } from "./Scene";
 
-export class World {
+export class MapScene implements Scene {
+
+    private player: Player | null = null;
+    private map: Map | null = null;
+    private rayCaster: RayCaster | null = null;
+    private readonly RAYS_TO_CAST: number;
+    private halfVerticalRes: number;
+
+    private readonly PLAYER_VELOCITY = 4;
+    private readonly PLAYER_ROTATION = 0.15;
 
     constructor(
-        private renderer: IRenderer,
+        public renderer: IRenderer,
         private resolution: Size,
-        private map: Map,
-        private player: Player,
-        private rayCaster: RayCaster,
-        private halfVerticalRes: number = resolution.height / 2
-    ) { }
+        private keyState: { [key: string]: boolean }
+    ) {
 
-    public drawSkybox(ray: Ray, wallStartY: number): void {
+        this.RAYS_TO_CAST = this.resolution.width;
+        this.halfVerticalRes = this.resolution.height / 2;
+    }
+
+    /**
+     * Scene initialize.
+     * @returns 
+     */
+    public async initialize(): Promise<void> {
+
+        const mapLoad = await AssetsManager.loadMap('test.json');
+
+        if (mapLoad instanceof Error) {
+
+            alert('Error loading map');
+            return;
+        }
+
+        this.map = mapLoad;
+        await AssetsManager.loadMapAssets(this.map);
+
+        const spawnLoc = this.map.getRandomSpawnLocation();
+        this.player = new Player(new Point(spawnLoc.x, spawnLoc.y), spawnLoc.a);
+        this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
+
+        this.playNextMusic();
+
+        Debugger.map = this.map;
+        Debugger.player = this.player;
+    }
+
+    /**
+     * Scene update (player position and NPCs);
+     */
+    public update(): void {
+
+        this.updatePlayer();
+    }
+
+    /**
+     * Mouse movement player update.
+     * @param mov 
+     */
+    public mouseMovement(mov: Vector2): void {
+
+        if (!this.player) return;
+
+        this.player.angle = MathUtils.fixAngle(this.player.angle - this.PLAYER_ROTATION * mov.x * 0.02);
+    }
+
+    /**
+     * Mouse click.
+     * @param point 
+     * @param button 
+     */
+    public mouseClick(point: Point, button: number): void {
+
+    }
+
+    /**
+     * Update player position.
+     */
+    private updatePlayer(): void {
+
+        const movePlayer = (mov: Point) => {
+
+            const newXPos = new Point(this.player!.position.x + mov.x, this.player!.position.y);
+            const newYPos = new Point(this.player!.position.x, this.player!.position.y + mov.y);
+            const tileX = this.map!.getTileFromPosition(newXPos);
+            const tileY = this.map!.getTileFromPosition(newYPos);
+
+            if (!tileX?.collision && newXPos.x > 0 && newXPos.x < this.map!.worldSize.width) this.player!.position.x += mov.x;
+            if (!tileY?.collision && newYPos.y > 0 && newYPos.y < this.map!.worldSize.height) this.player!.position.y += mov.y;
+        };
+
+        if (this.keyState['ArrowUp']) {
+
+            const mov = new Point(
+                Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
+                -Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
+        }
+
+        if (this.keyState['ArrowDown']) {
+
+            const mov = new Point(
+                -Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
+                Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
+        }
+
+        if (this.keyState['ArrowLeft']) {
+
+            const mov = new Point(
+                -Math.cos(this.player!.angle - MathUtils.rad90) * this.PLAYER_VELOCITY,
+                Math.sin(this.player!.angle - MathUtils.rad90) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
+        }
+
+        if (this.keyState['ArrowRight']) {
+
+            const mov = new Point(
+                -Math.cos(this.player!.angle + MathUtils.rad90) * this.PLAYER_VELOCITY,
+                Math.sin(this.player!.angle + MathUtils.rad90) * this.PLAYER_VELOCITY
+            );
+
+            movePlayer(mov);
+        }
+    }
+
+    /**
+     * Draws the skybox.
+     * @param ray 
+     * @param wallStartY 
+     * @returns 
+     */
+    private drawSkybox(ray: Ray, wallStartY: number): void {
+
+        if (!this.map) return;
 
         const x = ray.index;
         const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
@@ -36,7 +170,16 @@ export class World {
         }
     }
 
-    public drawFloorCeiling(ray: Ray, wallStartY: number, wallHeight: number): void {
+    /**
+     * Draws the floor and ceiling textures.
+     * @param ray 
+     * @param wallStartY 
+     * @param wallHeight 
+     * @returns 
+     */
+    private drawFloorCeiling(ray: Ray, wallStartY: number, wallHeight: number): void {
+
+        if (!this.player || !this.map) return;
 
         const sin = Math.sin(ray.angle);
         const cos = Math.cos(ray.angle);
@@ -90,7 +233,13 @@ export class World {
         }
     }
 
-    public drawRays(): void {
+    /**
+     * Draws walls.
+     * @returns 
+     */
+    private drawRays(): void {
+
+        if (!this.player || !this.map || !this.rayCaster) return;
 
         const lineWidth = this.resolution.width / this.rayCaster.rays.length;
 
@@ -159,6 +308,7 @@ export class World {
                     if (!hitVerticalFirst) color = Color.shade(color, 0.6);
 
                     // distance shade
+                    // TODO: distance shade should use tile size.
                     const shade = 0.2 + 0.8 * (1 - distance / this.halfVerticalRes);
                     color = Color.shade(color, shade);
 
@@ -171,9 +321,18 @@ export class World {
         }
     }
 
+    /**
+     * Get texture coords.
+     * @param ray 
+     * @param lineHeight 
+     * @param textureStepY 
+     * @param hitVerticalFirst 
+     * @param texture 
+     * @returns 
+     */
     private getTextureCoords(ray: Ray, lineHeight: number, textureStepY: number, hitVerticalFirst: boolean, texture: Texture): Point | null {
 
-        if (!texture) return null;
+        if (!texture || !this.map) return null;
 
         let textureOffsetY = 0;
 
@@ -206,10 +365,40 @@ export class World {
         return new Point(roundTextureX, textureY);
     }
 
+    /**
+     * Scene draw.
+     */
     public draw(): void {
 
-        this.renderer.clear(Color.WHITE);
+        this.rayCaster!.cast(this.player!.position, this.player!.angle);
+        this.renderer.clear(Color.RED);
         this.drawRays();
         this.renderer.swapBuffer();
+    }
+
+    /**
+     * Scene dispose.
+     */
+    public dispose(): void {
+
+    }
+
+    /**
+     * Plays next map music.
+     */
+    private playNextMusic(): void {
+
+        const music = this.map?.musics[0];
+
+        if (music) {
+
+            music.onPlayEnded.on(() => {
+                // TODO: play next music
+            });
+
+            music.loop = true;
+            music.volume = 0.3;
+            music.play();
+        }
     }
 }

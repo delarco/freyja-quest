@@ -1,29 +1,24 @@
 import { Size } from "./models/size";
-import { Minimap } from "./minimap";
-import { Canvas2DRenderer } from "./renderer/canvas-2d-renderer";
-import { Map } from "./models/map";
-import { Player } from "./models/player";
-import { Point } from "./models/point";
 import { Clock } from "./utils/clock";
-import { RayCaster } from "./ray-caster";
 import { Debugger } from "./debugger";
-import { MathUtils } from "./utils/math-utils";
-import { World } from "./world";
 import { Canvas2DImageDataRenderer } from "./renderer/canvas-2d-image-data-renderer";
 import { AssetsManager } from "./assets-manager";
 import { Vector2 } from "./models/vector2";
+import { Scene } from "./scenes/Scene";
+import { IRenderer } from "./renderer/renderer";
+import { MapScene } from "./scenes/MapScene";
 
 export class Game {
 
-    private readonly minimapResolution = new Size(100, 100);
-    private readonly minimapScreenSize = new Size(200, 200);
+    /**
+     * Drawing area.
+     */
+    private readonly resolution = new Size(640, 480);
 
-    private readonly worldResolution = new Size(640, 480);
-    private readonly worldScreenSize = new Size(800, 600);
-
-    private readonly PLAYER_VELOCITY = 4;
-    private readonly PLAYER_ROTATION = 0.15;
-    private readonly RAYS_TO_CAST = this.worldResolution.width;
+    /**
+     * Canvas size.
+     */
+    private readonly screenSize = new Size(800, 600);
 
     /**
      * Tile size in world
@@ -41,34 +36,19 @@ export class Game {
     private rafHandle: number = -1;
 
     /**
-     * Minimap
-     */
-    private minimap: Minimap | null = null;
-
-    /**
-     * Map
-     */
-    private map: Map | null = null;
-
-    /**
-     * Player
-     */
-    private player: Player | null = null;
-
-    /**
      * Clock for FPS count and delta time to updates.
      */
     private clock = new Clock();
 
     /**
-     * Ray caster
+     * Main canvas renderer.
      */
-    private rayCaster: RayCaster | null = null;
+    private renderer: IRenderer | null = null;
 
     /**
-     * World.
+     * Current scene.
      */
-    private world: World | null = null;
+    private scene: Scene | null = null;
 
     /**
      * Initialize assets manager, map, minimap, world and renderers.
@@ -76,43 +56,13 @@ export class Game {
      */
     public async initialize(minimapCanvas: HTMLCanvasElement, worldCanvas: HTMLCanvasElement): Promise<void> {
 
-        await AssetsManager.Instance.initialize(this.worldResolution, this.TILE_SIZE);
+        this.renderer = new Canvas2DImageDataRenderer(worldCanvas, this.resolution, this.screenSize);
+        await AssetsManager.Instance.initialize(this.resolution, this.TILE_SIZE);
 
-        const mapLoad = await AssetsManager.loadMap('test.json');
-
-        if (mapLoad instanceof Error) {
-            alert('Error loading map');
-            return;
-        }
-
-        this.map = mapLoad;
-        await AssetsManager.loadMapAssets(this.map);
-
-        const spawnLoc = this.map.getRandomSpawnLocation();
-        this.player = new Player(new Point(spawnLoc.x, spawnLoc.y), spawnLoc.a);
-        this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
-
-        const minimapRenderer = new Canvas2DRenderer(minimapCanvas, this.minimapResolution, this.minimapScreenSize);
-        this.minimap = new Minimap(
-            minimapRenderer,
-            this.minimapResolution,
-            this.map,
-            this.player,
-            this.rayCaster
-        );
-
-        const worldRenderer = new Canvas2DImageDataRenderer(worldCanvas, this.worldResolution, this.worldScreenSize);
-        this.world = new World(
-            worldRenderer,
-            this.worldResolution,
-            this.map,
-            this.player,
-            this.rayCaster
-        );
+        this.scene = new MapScene(this.renderer, this.resolution, this.keyState);
+        await this.scene.initialize();
 
         Debugger.clock = this.clock;
-        Debugger.map = this.map;
-        Debugger.player = this.player;
     }
 
     /**
@@ -120,7 +70,6 @@ export class Game {
      */
     public run(): void {
 
-        this.playNextMusic();
         this.rafHandle = requestAnimationFrame(() => this.mainLoop());
     }
 
@@ -144,10 +93,9 @@ export class Game {
 
         if (update) {
 
-            this.updatePlayer();
+            this.scene?.update();
         }
 
-        this.rayCaster!.cast(this.player!.position, this.player!.angle);
         this.draw();
         Debugger.update();
         Debugger.firstFrame = false;
@@ -160,65 +108,7 @@ export class Game {
      */
     private draw(): void {
 
-        this.minimap!.draw();
-        this.world!.draw();
-    }
-
-    /**
-     * Update player position
-     */
-    private updatePlayer(): void {
-
-        const movePlayer = (mov: Point) => {
-
-            const newXPos = new Point(this.player!.position.x + mov.x, this.player!.position.y);
-            const newYPos = new Point(this.player!.position.x, this.player!.position.y + mov.y);
-            const tileX = this.map!.getTileFromPosition(newXPos);
-            const tileY = this.map!.getTileFromPosition(newYPos);
-
-            if (!tileX?.collision && newXPos.x > 0 && newXPos.x < this.map!.worldSize.width) this.player!.position.x += mov.x;
-            if (!tileY?.collision && newYPos.y > 0 && newYPos.y < this.map!.worldSize.height) this.player!.position.y += mov.y;
-        };
-
-        if (this.keyState['ArrowUp']) {
-
-            const mov = new Point(
-                Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
-                -Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
-            );
-
-            movePlayer(mov);
-        }
-
-        if (this.keyState['ArrowDown']) {
-
-            const mov = new Point(
-                -Math.cos(this.player!.angle) * this.PLAYER_VELOCITY,
-                Math.sin(this.player!.angle) * this.PLAYER_VELOCITY
-            );
-
-            movePlayer(mov);
-        }
-
-        if (this.keyState['ArrowLeft']) {
-
-            const mov = new Point(
-                -Math.cos(this.player!.angle - MathUtils.rad90) * this.PLAYER_VELOCITY,
-                Math.sin(this.player!.angle - MathUtils.rad90) * this.PLAYER_VELOCITY
-            );
-
-            movePlayer(mov);
-        }
-
-        if (this.keyState['ArrowRight']) {
-
-            const mov = new Point(
-                -Math.cos(this.player!.angle + MathUtils.rad90) * this.PLAYER_VELOCITY,
-                Math.sin(this.player!.angle + MathUtils.rad90) * this.PLAYER_VELOCITY
-            );
-
-            movePlayer(mov);
-        }
+        this.scene?.draw();
     }
 
     /**
@@ -229,24 +119,6 @@ export class Game {
      */
     public mouseMovement(mov: Vector2) {
 
-        if (!this.player) return;
-
-        this.player.angle = MathUtils.fixAngle(this.player.angle - this.PLAYER_ROTATION * mov.x * 0.02);
-    }
-
-    private playNextMusic(): void {
-
-        const music = this.map?.musics[0];
-
-        if (music) {
-
-            music.onPlayEnded.on(() => {
-                // TODO: play next music
-            });
-
-            music.loop = true;
-            music.volume = 0.3;
-            music.play();
-        }
+        this.scene?.mouseMovement(mov);
     }
 }
