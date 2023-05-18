@@ -946,6 +946,11 @@
             "texture": "gold-coin.png",
             "frames": 5,
             "size": { "width": 32, "height": 32 }
+        },
+        {
+            "texture": "key.png",
+            "frames": 1,
+            "size": { "width": 32, "height": 32 }
         }
     ]
 }
