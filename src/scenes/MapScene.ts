@@ -6,7 +6,6 @@ import { Player } from "../models/player";
 import { Point } from "../models/point";
 import { Direction, Ray } from "../models/ray";
 import { Size } from "../models/size";
-import { Sprite } from "../models/sprite";
 import { Texture } from "../models/texture";
 import { Vector2 } from "../models/vector2";
 import { RayCaster } from "../ray-caster";
@@ -73,7 +72,7 @@ export class MapScene implements Scene {
 
         this.updatePlayer();
 
-        for(let sprite of this.map!.sprites) sprite.update();
+        for (let sprite of this.map!.sprites) sprite.update();
     }
 
     /**
@@ -382,12 +381,48 @@ export class MapScene implements Scene {
      */
     private drawSprites(): void {
 
-        let y = 0;
+        for (let sprite of this.map!.sprites) {
 
-        for(let sprite of this.map!.sprites) {
+            const distance = sprite.position.distance(this.player!.position);
 
-            this.renderer.drawTexture(0, y, sprite.currentFrame || Texture.EMPTY);
-            y += sprite.size.height + 10;
+            const dXdY = new Vector2(
+                sprite.position.x - this.player!.position.x,
+                sprite.position.y - this.player!.position.y
+            );
+
+            const theta = MathUtils.fixAngle(Math.atan2(-dXdY.y, dXdY.x));
+            let leftMostRay = MathUtils.fixAngle(this.player!.angle + (MathUtils.rad60 / 2) - theta);
+            let delta = theta - this.player!.angle;
+            
+            const FOV = MathUtils.rad60;
+            const HALF_FOV = FOV / 2;
+            const norm_dist = distance * Math.cos(delta);
+            const SCREEN_DIST = (this.resolution.width / 2) / Math.tan(HALF_FOV);
+            const PROJ = SCREEN_DIST / norm_dist;
+
+            let screenPos = new Point(
+                leftMostRay * (this.resolution.width / MathUtils.rad60),
+                (this.resolution.height / 2)
+            );
+
+            screenPos = new Point(
+                Math.floor(screenPos.x),
+                Math.floor(screenPos.y)
+            );
+
+            if(distance > 16 && PROJ > 0 && PROJ < 32) {
+
+                const frameTexture = sprite.currentFrame;
+
+                if(!frameTexture) continue;
+
+                const spScreen = new Point(
+                    Math.floor(screenPos.x - (frameTexture.size.width / 2 * PROJ)),
+                    Math.floor(screenPos.y - (frameTexture.size.height / 2 * PROJ)),
+                );
+        
+                this.renderer.drawTexture(spScreen.x, spScreen.y, frameTexture, PROJ);
+            }
         }
     }
 
