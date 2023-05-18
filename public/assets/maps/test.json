@@ -945,12 +945,14 @@
         {
             "texture": "gold-coin.png",
             "frames": 5,
-            "size": { "width": 32, "height": 32 }
+            "size": { "width": 32, "height": 32 },
+            "position": { "x": 48, "y": 48 }
         },
         {
             "texture": "key.png",
             "frames": 1,
-            "size": { "width": 32, "height": 32 }
+            "size": { "width": 32, "height": 32 },
+            "position": { "x": 175, "y": 125 }
         }
     ]
 }
