@@ -3,36 +3,52 @@ import { Texture } from "./texture";
 
 export class Sprite {
 
-    private framesTexture: Array<Texture>;
+    private framesTexture: Array<Texture> | null = null;
+    private currentFrameCounter = 0;
 
     constructor(
         public name: string,
-        public texture: Texture,
+        public textureFilename: string,
         public size: Size,
         public frames: number,
-    ) {
-        
+    ) { }
+
+    public get currentFrame(): Texture | null {
+
+        const sprite = this.framesTexture![this.currentFrameCounter];
+
+        return sprite;
+    }
+
+    public generateFrames(texture: Texture): void {
+
         this.framesTexture = new Array<Texture>();
 
-        for(let i = 0; i < frames; i++) {
-            
-            const startX = i * size.width;            
-            const frameTexture = new Texture(`${name}-${i}`, new Size(size.width, size.height), []);
+        for (let i = 0; i < this.frames; i++) {
 
-            for(let y = 0; y < size.height; y++) {
+            const startX = i * this.size.width;
+            const frameTexture = new Texture(`${this.name}-${i}`, new Size(this.size.width, this.size.height), []);
 
-                for(let x = startX; x < startX + size.width; x++) {
+            for (let y = 0; y < this.size.height; y++) {
+
+                for (let x = startX; x < startX + this.size.width; x++) {
 
                     frameTexture.data.push(texture.getPixelColor(x, y));
                 }
             }
 
             this.framesTexture.push(frameTexture);
-        }        
+        }
     }
 
     public getFrame(frame: number): Texture {
 
-        return this.framesTexture[frame];
+        return this.framesTexture![frame];
+    }
+
+    public update(): void {
+        
+        this.currentFrameCounter++;
+        if (this.currentFrameCounter == this.frames) this.currentFrameCounter = 0;
     }
 }
