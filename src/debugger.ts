@@ -25,7 +25,7 @@ export class Debugger {
 
         this.fpsInfo.innerText = this._clock?.fps.toString();
 
-        if (this._map && this.player) {
+        if (this._map && this._player) {
 
             const playerTile = this._map.getTileFromPosition(this._player.position);
 
