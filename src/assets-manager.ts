@@ -3,6 +3,7 @@ import { Color } from "./models/color";
 import { Map } from "./models/map";
 import { Direction } from "./models/ray";
 import { Size } from "./models/size";
+import { Sprite } from "./models/sprite";
 import { Texture } from "./models/texture";
 import { ArrayUtils } from "./utils/array-utils";
 import { MapUtils } from "./utils/map-utils";
@@ -16,6 +17,7 @@ export class AssetsManager {
     public static readonly textures: Array<Texture> = [];
     public static readonly maps: Array<Map> = [];
     public static readonly audios: Array<Audio> = [];
+    public static readonly sprites: Array<Sprite> = [];
 
     public static get Instance() {
 
@@ -41,12 +43,14 @@ export class AssetsManager {
      * @param filename 
      * @returns 
      */
-    public static async loadTexture(filename: string, debugBorders: boolean = false): Promise<Texture> {
+    public static async loadTexture(filename: string, isSprite: boolean = false, debugBorders: boolean = false): Promise<Texture> {
+
+        const url = `assets/${isSprite ? 'sprites' : 'textures'}/${filename}`;
 
         return new Promise(
             (resolve, reject) => {
 
-                fetch(`assets/textures/${filename}`)
+                fetch(url)
                     .then(async result => {
 
                         const fileExt = filename.split('.').pop()?.toUpperCase();
@@ -191,7 +195,7 @@ export class AssetsManager {
             map.tiles
                 .filter(f => f.wall[Direction.SOUTH] == filename)
                 .forEach(tile => tile.wallTexture[Direction.SOUTH] = texture);
-                
+
             map.tiles
                 .filter(f => f.wall[Direction.EAST] == filename)
                 .forEach(tile => tile.wallTexture[Direction.EAST] = texture);
@@ -207,7 +211,7 @@ export class AssetsManager {
             map.tiles
                 .filter(f => f.wallDetails[Direction.SOUTH] == filename)
                 .forEach(tile => tile.wallDetailsTexture[Direction.SOUTH] = texture);
-                
+
             map.tiles
                 .filter(f => f.wallDetails[Direction.EAST] == filename)
                 .forEach(tile => tile.wallDetailsTexture[Direction.EAST] = texture);
@@ -270,5 +274,31 @@ export class AssetsManager {
     public static getAudio(filename: string): Audio | null {
 
         return AssetsManager.audios.find(audio => audio.filename == filename) || null;
+    }
+
+    /**
+     * Load sprite from assets.
+     * @param filename 
+     * @returns 
+     */
+    public static async loadSprite(name: string, textureFilename: string, frames: number, size: Size): Promise<Sprite | null> {
+
+        const texture = await AssetsManager.loadTexture(textureFilename, true);
+
+        if (!texture) return null;
+
+        const sprite = new Sprite(name, texture, size, frames);
+
+        AssetsManager.sprites.push(sprite);
+        return sprite;
+    }
+
+    /**
+     * Returns a sprite by it's name.
+     * @param name Audio file name
+     */
+    public static getSprite(name: string): Sprite | null {
+
+        return AssetsManager.sprites.find(sprite => sprite.name == name) || null;
     }
 }
