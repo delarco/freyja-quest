@@ -71,7 +71,7 @@ export class MapUtils {
                 raw.texture,
                 raw.size,
                 raw.frames,
-                raw.position
+                new Point(raw.position.x, raw.position.y),
             );
         });
 
