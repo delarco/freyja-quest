@@ -29,9 +29,6 @@ export class MapScene implements Scene {
 
     public onEnd = new TypedEvent<boolean>();
 
-    private sprite: Sprite | null = null;
-    private spriteFrame = 0;
-
     constructor(
         public renderer: IRenderer,
         private resolution: Size,
@@ -59,8 +56,6 @@ export class MapScene implements Scene {
         this.map = mapLoad;
         await AssetsManager.loadMapAssets(this.map);
 
-        this.sprite = await AssetsManager.loadSprite('gold-coin', 'gold-coin.png', 5, new Size(32, 32));
-
         const spawnLoc = this.map.getRandomSpawnLocation();
         this.player = new Player(new Point(spawnLoc.x, spawnLoc.y), spawnLoc.a);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
@@ -76,9 +71,9 @@ export class MapScene implements Scene {
      */
     public update(): void {
 
-        this.spriteFrame++;
-        if (this.spriteFrame == 5) this.spriteFrame = 0;
         this.updatePlayer();
+
+        for(let sprite of this.map!.sprites) sprite.update();
     }
 
     /**
@@ -387,8 +382,13 @@ export class MapScene implements Scene {
      */
     private drawSprites(): void {
 
-        const sprite = this.sprite?.getFrame(this.spriteFrame);
-        if (sprite) this.renderer.drawTexture(0, 0, sprite)
+        let y = 0;
+
+        for(let sprite of this.map!.sprites) {
+
+            this.renderer.drawTexture(0, y, sprite.currentFrame || Texture.EMPTY);
+            y += sprite.size.height + 10;
+        }
     }
 
     /**
