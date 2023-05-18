@@ -6,6 +6,7 @@ import { Player } from "../models/player";
 import { Point } from "../models/point";
 import { Direction, Ray } from "../models/ray";
 import { Size } from "../models/size";
+import { Sprite } from "../models/sprite";
 import { Texture } from "../models/texture";
 import { Vector2 } from "../models/vector2";
 import { RayCaster } from "../ray-caster";
@@ -27,6 +28,9 @@ export class MapScene implements Scene {
     private readonly PLAYER_ROTATION = 0.15;
 
     public onEnd = new TypedEvent<boolean>();
+
+    private sprite: Sprite | null = null;
+    private spriteFrame = 0;
 
     constructor(
         public renderer: IRenderer,
@@ -55,6 +59,8 @@ export class MapScene implements Scene {
         this.map = mapLoad;
         await AssetsManager.loadMapAssets(this.map);
 
+        this.sprite = await AssetsManager.loadSprite('gold-coin', 'gold-coin.png', 5, new Size(32, 32));
+
         const spawnLoc = this.map.getRandomSpawnLocation();
         this.player = new Player(new Point(spawnLoc.x, spawnLoc.y), spawnLoc.a);
         this.rayCaster = new RayCaster(this.RAYS_TO_CAST, this.map);
@@ -70,6 +76,8 @@ export class MapScene implements Scene {
      */
     public update(): void {
 
+        this.spriteFrame++;
+        if (this.spriteFrame == 5) this.spriteFrame = 0;
         this.updatePlayer();
     }
 
@@ -218,7 +226,12 @@ export class MapScene implements Scene {
                 if (tx < 0) tx = floorTexure.size.width + tx - 1;
                 if (ty < 0) ty = floorTexure.size.height + ty - 1;
 
-                const color = Color.shade(floorTexure.getPixelColor(tx, ty), shade);
+                let color = Color.shade(floorTexure.getPixelColor(tx, ty), shade);
+
+                if (Math.floor(x) == 1 && Math.floor(y) == 1) {
+                    color = Color.RED;
+                }
+
                 this.renderer.drawPixel(pixelX, pixelY, color);
             }
 
@@ -313,6 +326,7 @@ export class MapScene implements Scene {
                     // distance shade
                     // TODO: distance shade should use tile size.
                     const shade = 0.2 + 0.8 * (1 - distance / this.halfVerticalRes);
+                    //const shade = 1 - Math.min(distance / this.map.tileSize, 1);// * (1 - distance / this.halfVerticalRes);
                     color = Color.shade(color, shade);
 
                     if (textureCoords) textureCoords.y += textureStepY;
@@ -369,6 +383,15 @@ export class MapScene implements Scene {
     }
 
     /**
+     * Draw sprites.
+     */
+    private drawSprites(): void {
+
+        const sprite = this.sprite?.getFrame(this.spriteFrame);
+        if (sprite) this.renderer.drawTexture(0, 0, sprite)
+    }
+
+    /**
      * Scene draw.
      */
     public draw(): void {
@@ -376,6 +399,7 @@ export class MapScene implements Scene {
         this.rayCaster!.cast(this.player!.position, this.player!.angle);
         this.renderer.clear(Color.RED);
         this.drawRays();
+        this.drawSprites();
         this.renderer.swapBuffer();
     }
 
