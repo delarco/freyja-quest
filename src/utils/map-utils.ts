@@ -4,6 +4,7 @@ import { Map } from "../models/map";
 import { Point } from "../models/point";
 import { Direction } from "../models/ray";
 import { SpawnLocation } from "../models/spawn-location";
+import { Sprite } from "../models/sprite";
 import { Texture } from "../models/texture";
 import { Tile } from "../models/tile";
 import { ArrayUtils } from "./array-utils";
@@ -63,6 +64,11 @@ export class MapUtils {
             return tile;
         });
 
+        const sprites = jsonData.sprites.map((raw: any) => {
+
+            return new Sprite(raw.texture, raw.texture, raw.size, raw.frames);
+        });
+
         const map = new Map(
             jsonData.name,
             jsonData.size.width,
@@ -71,7 +77,8 @@ export class MapUtils {
             tiles,
             jsonData.spawnLocations,
             jsonData.skybox,
-            jsonData.music
+            jsonData.music,
+            sprites
         );
 
         return map;
@@ -89,7 +96,7 @@ export class MapUtils {
         const spawnLocations = [new SpawnLocation(112, 67, 2.7)];
         const tiles = new Array<Tile>();
 
-        const map = new Map('Test Map', width, height, tileSize, tiles, spawnLocations, 'skybox-night');
+        const map = new Map('Test Map', width, height, tileSize, tiles, spawnLocations, 'skybox-night', [], []);
         const floorTexture = AssetsManager.getTexture('rocks') || Texture.EMPTY;
         const wallTexture1 = AssetsManager.getTexture('bricks') || Texture.EMPTY;
         const wallTexture2 = AssetsManager.getTexture('rocks-sand') || Texture.EMPTY;

@@ -2,6 +2,7 @@ import { Audio } from "./audio";
 import { Point } from "./point";
 import { Size } from "./size";
 import { SpawnLocation } from "./spawn-location";
+import { Sprite } from "./sprite";
 import { Texture } from "./texture";
 import { Tile } from "./tile";
 
@@ -20,7 +21,8 @@ export class Map {
         public tiles: Array<Tile>,
         public spawnLocations: Array<SpawnLocation>,
         public skybox: string,
-        public musicList: Array<string> = []) {
+        public musicList: Array<string> = [],
+        public sprites: Array<Sprite>) {
 
         this.size = new Size(width, height);
         this.worldSize = new Size(width * tileSize, height * tileSize);
