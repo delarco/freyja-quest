@@ -239,6 +239,12 @@ export class AssetsManager {
         }
 
         map.musics = musicList;
+
+        for(let sprite of map.sprites) {
+
+            const texture = await AssetsManager.loadTexture(sprite.textureFilename, true);
+            sprite.generateFrames(texture);
+        }
     }
 
     /**
@@ -287,7 +293,8 @@ export class AssetsManager {
 
         if (!texture) return null;
 
-        const sprite = new Sprite(name, texture, size, frames);
+        const sprite = new Sprite(name, textureFilename, size, frames);
+        sprite.generateFrames(texture);
 
         AssetsManager.sprites.push(sprite);
         return sprite;
