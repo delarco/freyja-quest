@@ -74,13 +74,32 @@ export class Canvas2DImageDataRenderer implements IRenderer {
         this.buffer![index + 3] = color.a;
     }
 
-    drawTexture(x: number, y: number, texture: Texture): void {
-        
-        for(let ty of ArrayUtils.range(texture.size.height)) {
+    drawTexture(x: number, y: number, texture: Texture, scale: number = 1): void {
 
-            for(let tx of ArrayUtils.range(texture.size.width)) {
+        for (let ty of ArrayUtils.range(texture.size.height)) {
 
-                this.drawPixel(x + tx, y + ty, texture.getPixelColor(tx, ty))
+            for (let tx of ArrayUtils.range(texture.size.width)) {
+
+                const dx = x + tx * scale;
+                const dy = y + ty * scale;
+
+                const color = texture.getPixelColor(tx, ty);
+
+                if (color.a == 0) continue;
+
+                for (let yOff = 0; yOff < Math.ceil(scale); yOff++) {
+
+                    const ddy = Math.floor(dy) + yOff;
+ 
+                    for (let xOff = 0; xOff < Math.ceil(scale); xOff++) {
+
+                        const ddx = Math.floor(dx) + xOff;
+                        
+                        if(ddx < 0 || ddx>= this.resolution.width) continue;
+                        
+                        this.drawPixel(ddx, ddy, color)
+                    }
+                }
             }
         }
     }

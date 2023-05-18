@@ -15,7 +15,7 @@ export interface IRenderer {
 
     drawPixel(x: number, y: number, color: Color): void;
 
-    drawTexture(x: number, y: number, texture: Texture): void;
+    drawTexture(x: number, y: number, texture: Texture, scale?: number): void;
 
     swapBuffer(): void;
 }
