@@ -1,3 +1,4 @@
+import { Point } from "./point";
 import { Size } from "./size";
 import { Texture } from "./texture";
 
@@ -11,6 +12,7 @@ export class Sprite {
         public textureFilename: string,
         public size: Size,
         public frames: number,
+        public position: Point,
     ) { }
 
     public get currentFrame(): Texture | null {

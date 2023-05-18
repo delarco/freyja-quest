@@ -66,7 +66,13 @@ export class MapUtils {
 
         const sprites = jsonData.sprites.map((raw: any) => {
 
-            return new Sprite(raw.texture, raw.texture, raw.size, raw.frames);
+            return new Sprite(
+                raw.texture,
+                raw.texture,
+                raw.size,
+                raw.frames,
+                raw.position
+            );
         });
 
         const map = new Map(
