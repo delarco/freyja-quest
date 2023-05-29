@@ -17,5 +17,7 @@ export interface IRenderer {
 
     drawTexture(x: number, y: number, texture: Texture, scale?: number): void;
 
+    drawText(text: string, x: number, y: number, fontSize: number, color: Color, bold?: boolean, borderWidth?: number | null, borderColor?: Color | null): void;
+
     swapBuffer(): void;
 }

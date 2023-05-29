@@ -73,6 +73,10 @@ export class Canvas2DRenderer implements IRenderer {
         throw new Error("Method not implemented.");
     }
 
+    drawText(text: string, x: number, y: number, fontSize: number, color: Color, bold?: boolean | undefined, borderWidth?: number | null | undefined, borderColor?: Color | null | undefined): void {
+        throw new Error("Method not implemented.");
+    }
+
     swapBuffer(): void {
         throw new Error("Method not implemented.");
     }

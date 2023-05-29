@@ -1,3 +1,5 @@
+import { AssetsManager } from "../assets-manager";
+import { Debugger } from "../debugger";
 import { Color } from "../models/color";
 import { Size } from "../models/size";
 import { Texture } from "../models/texture";
@@ -9,6 +11,9 @@ export class Canvas2DImageDataRenderer implements IRenderer {
     private context: CanvasRenderingContext2D | null;
     private imageData: ImageData | null = null;
     public buffer: Uint8ClampedArray | null = null;
+
+    private textCanvas: HTMLCanvasElement;
+    private textContext: CanvasRenderingContext2D;
 
     constructor(private canvas: HTMLCanvasElement, private resolution: Size, private screen: Size) {
 
@@ -22,6 +27,11 @@ export class Canvas2DImageDataRenderer implements IRenderer {
 
         this.imageData = this.context.getImageData(0, 0, resolution.width, resolution.height);
         this.buffer = this.imageData.data;
+
+        this.textCanvas = document.createElement("canvas")!;
+        this.textCanvas.width = resolution.width;
+        this.textCanvas.height = resolution.height;
+        this.textContext = this.textCanvas.getContext("2d", { willReadFrequently: true })!;
     }
 
     clear(color: Color): void {
@@ -41,7 +51,7 @@ export class Canvas2DImageDataRenderer implements IRenderer {
 
     drawHorizontalLine(x1: number, x2: number, y: number, color: Color): void {
 
-        for(let x = x1; x <= x2; x++) {
+        for (let x = x1; x <= x2; x++) {
 
             this.drawPixel(x, y, color);
         }
@@ -64,7 +74,7 @@ export class Canvas2DImageDataRenderer implements IRenderer {
 
     drawPixel(x: number, y: number, color: Color): void {
 
-        if(color.a == 0) return;
+        if (color.a == 0) return;
 
         var index = 4 * (y * this.resolution.width + x);
 
@@ -90,16 +100,57 @@ export class Canvas2DImageDataRenderer implements IRenderer {
                 for (let yOff = 0; yOff < Math.ceil(scale); yOff++) {
 
                     const ddy = Math.floor(dy) + yOff;
- 
+
                     for (let xOff = 0; xOff < Math.ceil(scale); xOff++) {
 
                         const ddx = Math.floor(dx) + xOff;
-                        
-                        if(ddx < 0 || ddx>= this.resolution.width) continue;
-                        
+
+                        if (ddx < 0 || ddx >= this.resolution.width) continue;
+
                         this.drawPixel(ddx, ddy, color)
                     }
                 }
+            }
+        }
+    }
+
+    drawText(text: string, x: number, y: number, fontSize: number, color: Color, bold: boolean = false, borderWidth: number | null = null, borderColor: Color | null = null): void {
+
+        this.textContext!.clearRect(0, 0, this.resolution.width, this.resolution.height);
+
+        this.textContext!.fillStyle = color.RGB;
+        this.textContext!.font = `${bold ? 'bold' : ''} ${fontSize}px Arial`;
+
+        const metrics = this.textContext.measureText(text);
+        this.textContext!.fillText(text, metrics.actualBoundingBoxLeft, metrics.actualBoundingBoxAscent);
+
+        if (borderWidth && borderColor) {
+            this.textContext!.lineWidth = borderWidth;
+            this.textContext!.strokeStyle = borderColor.RGB;
+            this.textContext!.strokeText(text, metrics.actualBoundingBoxLeft, metrics.actualBoundingBoxAscent);
+        }
+
+        const textImageData = this.textContext.getImageData(
+            0, 0,
+            Math.ceil(metrics.width),
+            metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent
+        );
+
+        const textBuffer = textImageData.data;
+
+        for (let ty of ArrayUtils.range(textImageData.height)) {
+
+            for (let tx of ArrayUtils.range(textImageData.width)) {
+
+                const offset = 4 * ((ty + y) * this.resolution.width + tx + x);
+                const textOffset = 4 * (ty * textImageData.width + tx);
+
+                if (textBuffer[textOffset + 3] < 150) continue;
+
+                this.buffer![offset + 0] = textBuffer[textOffset + 0];
+                this.buffer![offset + 1] = textBuffer[textOffset + 1];
+                this.buffer![offset + 2] = textBuffer[textOffset + 2];
+                this.buffer![offset + 3] = textBuffer[textOffset + 3];
             }
         }
     }
