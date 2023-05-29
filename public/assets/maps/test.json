@@ -121,8 +121,7 @@
         {
             "minimapColor": [196, 196, 196],
             "collision": false,
-            "wall": "rocks.tex",
-            "floor": "rocks-sand.tex",
+            "floor": "grass.png",
             "ceiling": "test-32x32.tex",
             "index": {
                 "x": 1,
