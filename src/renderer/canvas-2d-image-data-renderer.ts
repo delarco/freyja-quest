@@ -1,6 +1,7 @@
 import { AssetsManager } from "../assets-manager";
 import { Debugger } from "../debugger";
 import { Color } from "../models/color";
+import { Ray } from "../models/ray";
 import { Size } from "../models/size";
 import { Texture } from "../models/texture";
 import { ArrayUtils } from "../utils/array-utils";
@@ -106,6 +107,40 @@ export class Canvas2DImageDataRenderer implements IRenderer {
                         const ddx = Math.floor(dx) + xOff;
 
                         if (ddx < 0 || ddx >= this.resolution.width) continue;
+
+                        this.drawPixel(ddx, ddy, color)
+                    }
+                }
+            }
+        }
+    }
+
+    drawSprite(x: number, y: number, texture: Texture, distance: number, rays: Ray[], scale: number = 1): void {
+
+        for (let ty of ArrayUtils.range(texture.size.height)) {
+
+            for (let tx of ArrayUtils.range(texture.size.width)) {
+
+                const dx = x + tx * scale;
+                const dy = y + ty * scale;
+
+                const color = texture.getPixelColor(tx, ty);
+
+                if (color.a == 0) continue;
+
+                for (let yOff = 0; yOff < Math.ceil(scale); yOff++) {
+
+                    const ddy = Math.floor(dy) + yOff;
+
+                    for (let xOff = 0; xOff < Math.ceil(scale); xOff++) {
+
+                        const ddx = Math.floor(dx) + xOff;
+
+                        if (ddx < 0 || ddx >= this.resolution.width) continue;
+
+                        const ray = rays[ddx];
+                        
+                        if(ray && ray.size < distance) continue;
 
                         this.drawPixel(ddx, ddy, color)
                     }

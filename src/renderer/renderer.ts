@@ -1,4 +1,5 @@
 import { Color } from "../models/color";
+import { Ray } from "../models/ray";
 import { Texture } from "../models/texture";
 
 export interface IRenderer {
@@ -16,6 +17,8 @@ export interface IRenderer {
     drawPixel(x: number, y: number, color: Color): void;
 
     drawTexture(x: number, y: number, texture: Texture, scale?: number): void;
+
+    drawSprite(x: number, y: number, texture: Texture, distance: number, rays: Ray[], scale?: number): void;
 
     drawText(text: string, x: number, y: number, fontSize: number, color: Color, bold?: boolean, borderWidth?: number | null, borderColor?: Color | null): void;
 
