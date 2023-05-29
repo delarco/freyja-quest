@@ -158,9 +158,11 @@ export class MapScene implements Scene {
      * @param wallStartY 
      * @returns 
      */
-    private drawSkybox(ray: Ray, wallStartY: number): void {
+    private drawSkybox(ray: Ray, wallStartY: number | null): void {
 
         if (!this.map) return;
+
+        if(wallStartY == null) wallStartY = this.halfVerticalRes;
 
         const x = ray.index;
         const tx = Math.floor(MathUtils.radiansToDegrees(ray.angle));
@@ -182,13 +184,17 @@ export class MapScene implements Scene {
      * @param wallHeight 
      * @returns 
      */
-    private drawFloorCeiling(ray: Ray, wallStartY: number, wallHeight: number): void {
+    private drawFloorCeiling(ray: Ray, wallStartY: number | null, wallHeight: number | null): void {
 
         if (!this.player || !this.map) return;
 
         const sin = Math.sin(ray.angle);
         const cos = Math.cos(ray.angle);
         const cosEyeFish = Math.cos(ray.angleFishEyeFix);
+
+        if(wallStartY == null) wallStartY = this.halfVerticalRes - 1;
+
+        if(wallHeight == null) wallHeight = 1;
 
         for (let j of ArrayUtils.range(this.halfVerticalRes)) {
 
@@ -252,7 +258,12 @@ export class MapScene implements Scene {
 
             const ray = this.rayCaster.rays[index];
 
-            if (!ray.collidedTile) continue;
+            if (!ray.collidedTile) {
+
+                this.drawSkybox(ray, null);
+                this.drawFloorCeiling(ray, null, null);
+                continue;
+            }
 
             const texture = ray.collidedTile.wallTexture[ray.collisionDirection] || Texture.EMPTY;
             const textureDetail = ray.collidedTile.wallDetailsTexture[ray.collisionDirection];
