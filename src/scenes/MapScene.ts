@@ -416,7 +416,7 @@ export class MapScene implements Scene {
                     Math.floor(screenPos.y - (frameTexture.size.height / 2 * PROJ)),
                 );
         
-                this.renderer.drawTexture(spScreen.x, spScreen.y, frameTexture, PROJ);
+                this.renderer.drawSprite(spScreen.x, spScreen.y, frameTexture, distance, this.rayCaster!.rays, PROJ);
             }
         }
     }
