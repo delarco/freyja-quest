@@ -221,11 +221,6 @@ export class MapScene implements Scene {
                 if (ty < 0) ty = floorTexure.size.height + ty - 1;
 
                 let color = Color.shade(floorTexure.getPixelColor(tx, ty), shade);
-
-                if (Math.floor(x) == 1 && Math.floor(y) == 1) {
-                    color = Color.RED;
-                }
-
                 this.renderer.drawPixel(pixelX, pixelY, color);
             }
 
