@@ -942,7 +942,7 @@
     ],
     "sprites": [
         {
-            "texture": "gold-coin.png",
+            "texture": "camp-fire.png",
             "frames": 5,
             "size": { "width": 32, "height": 32 },
             "position": { "x": 48, "y": 48 }
