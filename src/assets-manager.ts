@@ -1,6 +1,7 @@
 import { Audio, AudioType } from "./models/audio";
 import { Color } from "./models/color";
 import { Map } from "./models/map";
+import { Point } from "./models/point";
 import { Direction } from "./models/ray";
 import { Size } from "./models/size";
 import { Sprite } from "./models/sprite";
@@ -293,7 +294,7 @@ export class AssetsManager {
 
         if (!texture) return null;
 
-        const sprite = new Sprite(name, textureFilename, size, frames);
+        const sprite = new Sprite(name, textureFilename, size, frames, new Point());
         sprite.generateFrames(texture);
 
         AssetsManager.sprites.push(sprite);
