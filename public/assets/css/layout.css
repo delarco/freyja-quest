@@ -39,6 +39,7 @@ section {
 
 section {
     grid-area: game;
+    text-align: center;
 }
 
 aside {
@@ -82,3 +83,5 @@ aside ul li:hover img,
 aside ul li.active img {
     filter: invert(1);
 }
+
+#minimap { display: none; }
