@@ -1,5 +1,6 @@
 import { AssetsManager } from "../assets-manager";
 import { Audio, AudioType } from "../models/audio";
+import { Color } from "../models/color";
 import { Point } from "../models/point";
 import { Size } from "../models/size";
 import { Texture } from "../models/texture";
@@ -12,10 +13,12 @@ export class TitleScreenScene implements Scene {
 
     private background: Texture | null = null;
     private clickHere: Texture | null = null;
-    private clickHerePosition: Point = new Point();
     private music: Audio | null = null;
-    private colorCounter: number = 0;
+    private colorCounter: number = 100;
     private colorCounterInc: number = 10;
+
+    private titleColor: Color = new Color(100, 100, 255);
+    private clickHereColor = new Color(200, 200, 255);
 
     public onEnd = new TypedEvent<boolean>();
 
@@ -27,27 +30,18 @@ export class TitleScreenScene implements Scene {
         this.clickHere = await AssetsManager.loadTexture('click-start.png');
         this.music = await AssetsManager.loadAudio('medieval-chateau.mp3', AudioType.MUSIC);
 
-        this.clickHerePosition = new Point(
-            this.resolution.width / 2 - this.clickHere.size.width / 2,
-            this.resolution.height / 2 - this.clickHere.size.height / 2,
-        );
-
         this.music.loop = true;
         this.music.volume = 0.3;
         this.music.play();
     }
 
     public update(): void {
-        
-        this.clickHere?.data.forEach(color => {
-
-            color.r = this.colorCounter;
-            color.b = this.colorCounter;
-        });
 
         this.colorCounter += this.colorCounterInc;
+        this.clickHereColor.r = this.colorCounter;
+        this.clickHereColor.g = this.colorCounter;
 
-        if (this.colorCounter <= 0 || this.colorCounter >= 130)
+        if (this.colorCounter <= 100 || this.colorCounter >= 200)
             this.colorCounterInc *= -1;
     }
 
@@ -66,8 +60,8 @@ export class TitleScreenScene implements Scene {
         if (!this.background || !this.clickHere) return;
 
         this.renderer.drawTexture(0, 0, this.background);
-        this.renderer.drawTexture(this.clickHerePosition.x, this.clickHerePosition?.y, this.clickHere);
-
+        this.renderer.drawText("Freyja Quest", 126, 40, 64, this.titleColor, true, 1, Color.BLUE);
+        this.renderer.drawText("Click here to start", 142, 340, 42, this.clickHereColor, true, 1, Color.BLUE);
         this.renderer.swapBuffer();
     }
 
